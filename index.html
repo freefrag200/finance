@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://scanner.tradingview.com; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta name="description" content="An offline-first financial analysis workspace for equity valuation, fixed income, portfolio risk, company comparison, financial ratios, and scenario DCF.">
+    <meta name="theme-color" content="#0b1520">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Advanced Risk &amp; Return Analyzer">
+    <meta property="og:description" content="An offline-first financial analysis workspace for equity valuation, fixed income, portfolio risk, company comparison, financial ratios, and scenario DCF.">
+    <title data-translate="app_title">Advanced Risk & Return Analyzer</title>
+    
+    <script src="vendor/plotly.min.js"></script>
+    <script src="vendor/xlsx.full.min.js"></script>
+    <script src="vendor/simple-statistics.min.js"></script>
+    <link href="vendor/fontawesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/sweetalert2.min.css">
+    
+    <style>
+      body {
+         font-family: Arial, sans-serif;
+         background-color: #111827; /* dark-bg */
+         color: #d1d5db; /* dark-text */
+      }
+
+      /* RTL/LTR Support */
+      .rtl {
+          direction: rtl;
+          text-align: right;
+      }
+
+      .ltr {
+          direction: ltr;
+          text-align: left;
+      }
+
+      /* RTL/LTR specific styles */
+      .rtl .tooltip-icon {
+          margin-right: 0.25rem;
+          margin-left: 0;
+      }
+
+      .ltr .tooltip-icon {
+          margin-left: 0.25rem;
+          margin-right: 0;
+      }
+
+      .rtl .tab-button {
+          border-right: none;
+          border-left: 3px solid transparent;
+      }
+
+      .ltr .tab-button {
+          border-left: none;
+          border-right: 3px solid transparent;
+      }
+
+      .rtl .tab-button.active {
+          border-right: none;
+          border-left: 3px solid #3b82f6;
+      }
+
+      .ltr .tab-button.active {
+          border-left: none;
+          border-right: 3px solid #3b82f6;
+      }
+
+      /* Number formatting */
+      .rtl .font-mono {
+          font-family: ui-monospace, monospace;
+      }
+
+      .ltr .font-mono {
+          font-family: 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
+      }
+
+      ::-webkit-scrollbar { width: 8px; height: 8px; }
+      ::-webkit-scrollbar-track { background: #1f2937; /* dark-card */ }
+      ::-webkit-scrollbar-thumb { background-color: #4b5563; /* secondary */ border-radius: 10px; border: 2px solid #1f2937; }
+      ::-webkit-scrollbar-thumb:hover { background-color: #6b7280; /* gray-500 */ }
+      .modal-backdrop.show { opacity: 0.7; background-color: #000; }
+      #plotModal .bg-gray-800 { background-color: #1f2937 !important; }
+      html, body { height: 100%; margin: 0; }
+      body { display: flex; flex-direction: column; }
+      main { flex-grow: 1; }
+      .modal-backdrop { background-color: rgba(0, 0, 0, 0.7); }
+      *:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.4); }
+      *:focus:not(:focus-visible) { outline: none; }
+       body.swal2-shown:not(.swal2-no-backdrop) { overflow-y: hidden !important; }
+       .swal2-popup { background-color: #1f2937 !important; color: #d1d5db !important; border-radius: 0.5rem !important; border: 1px solid #374151 !important; }
+       .swal2-title { color: #e5e7eb !important; }
+       .swal2-html-container { color: #d1d5db !important; text-align: justify !important; line-height: 1.7 !important; }
+       .swal2-confirm { background-color: #3b82f6 !important; color: white !important; border-radius: 0.375rem !important; }
+       .swal2-confirm:focus { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5) !important; }
+       .swal2-close { color: #9ca3af !important; }
+       .swal2-close:hover { color: #e5e7eb !important; }
+       .swal2-close:focus { box-shadow: none !important; }
+      .drag-over-active { outline: 3px dashed #3b82f6 !important; background-color: rgba(59, 130, 246, 0.1) !important; transition: background-color 0.2s ease-in-out, outline 0.2s ease-in-out; }
+      #dedicated-file-drop-area { border: 2px dashed #4b5563; border-radius: 0.375rem; padding: 1.5rem; text-align: center; color: #9ca3af; transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      #dedicated-file-drop-area.drag-over-active { border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.1); }
+      #dedicated-file-drop-area p { font-size: 0.875rem; margin-top: 0.5rem; }
+      #dedicated-file-drop-area .drop-icon { font-size: 2rem; color: #6b7280; margin-bottom: 0.5rem; }
+
+      /* Tab specific styles */
+      .tab-button {
+          padding: 0.75rem 1.25rem;
+          border-bottom: 3px solid transparent;
+          color: #9ca3af; /* dark-text-muted */
+          font-weight: 600;
+          transition: all 0.2s ease-in-out;
+      }
+      .tab-button:hover {
+          color: #d1d5db; /* dark-text */
+          border-color: #4b5563; /* secondary */
+      }
+      .tab-button.active {
+          color: #3b82f6; /* dark-primary */
+          border-color: #3b82f6; /* dark-primary */
+      }
+      .tab-content {
+          display: none;
+      }
+      .tab-content.active {
+          display: block;
+      }
+    </style>
+    <link rel="stylesheet" href="vendor/tailwind.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark theme-dark">
+
+    <div class="container mx-auto p-4 max-w-7xl space-y-6 app-shell">
+        <header class="flex flex-wrap justify-between items-center gap-4 border-b border-dark-border pb-4">
+            <div class="brand-lockup">
+                <span class="brand-mark" aria-hidden="true">CF</span>
+                <div class="brand-copy">
+                <span class="brand-kicker" data-translate="brand_kicker">CFA ANALYTICS</span>
+                <h1 class="text-2xl md:text-3xl font-bold text-white" data-translate="app_title">Advanced Risk & Return Analyzer</h1>
+                </div>
+            </div>
+            <div class="header-tools">
+                <span class="market-status"><i class="fas fa-circle" aria-hidden="true"></i><span data-translate="offline_workspace">Offline workspace</span></span>
+                <button id="theme-toggle" type="button" class="theme-toggle" aria-pressed="true" aria-label="Switch to light mode"><i class="fas fa-sun" aria-hidden="true"></i><span data-translate="theme_switch_light">Light mode</span></button>
+                <label class="language-control" for="lang-select"><span data-translate="lang_select_label">Language</span>
+                    <select id="lang-select" class="bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-2" aria-label="Language" data-aria-label-key="lang_select_label">
+                        <option value="en">English</option>
+                        <option value="fa">فارسی</option>
+                    </select>
+                </label>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="flex flex-wrap border-b border-dark-border" aria-label="Analysis workspaces" data-aria-label-key="workspace_navigation">
+            <span class="nav-heading" data-translate="nav_section_title">RESEARCH WORKSPACES</span>
+            <button type="button" class="tab-button active" aria-current="page" data-icon="◫" data-tab="asset-analysis" data-translate="tab_asset_analysis" data-tooltip-key="tab_asset_analysis" data-compact-en="Risk" data-compact-fa="ریسک" title="Asset analysis">Asset Analysis</button>
+            <button type="button" class="tab-button" data-icon="◇" data-tab="equity-valuation" data-translate="tab_equity_valuation" data-tooltip-key="tab_equity_valuation" data-compact-en="Equity" data-compact-fa="سهام" title="Equity valuation">Equity Valuation</button>
+            <button type="button" class="tab-button" data-icon="▤" data-tab="fixed-income" data-translate="tab_fixed_income" data-tooltip-key="tab_fixed_income" data-compact-en="Bonds" data-compact-fa="اوراق" title="Fixed income">Fixed Income</button>
+            <button type="button" class="tab-button" data-icon="◎" data-tab="portfolio-management" data-translate="tab_portfolio_management" data-tooltip-key="tab_portfolio_management" data-compact-en="Portfolio" data-compact-fa="سبد" title="Portfolio management">Portfolio Management</button>
+            <button type="button" class="tab-button" data-icon="⌁" data-tab="financial-strategy" data-translate="tab_financial_strategy" data-tooltip-key="tab_financial_strategy" data-compact-en="Fundamentals" data-compact-fa="بنیادی" title="Financial strategy analysis">Financial Strategy</button>
+            <div class="nav-foot"><span class="nav-foot-mark" data-translate="nav_local_badge">LOCAL</span><span data-translate="nav_local_note">Research data stays on this device</span></div>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 workspace-layout">
+            <!-- Results Sidebar (remains outside tabs for global visibility) -->
+            <aside class="lg:col-span-1 order-last lg:order-first bg-dark-card p-4 rounded-lg shadow-md flex flex-col h-fit space-y-3">
+                <h2 class="text-xl font-semibold mb-2 text-center border-b border-dark-border pb-2" data-translate="results_title">Analysis Results:</h2>
+                <div id="results-display" class="space-y-1.5 text-sm flex-grow">
+                    <div class="flex justify-between items-center"><strong data-translate="data_count">Data Points</strong> <span id="result-count" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span></div>
+                    <div class="flex justify-between items-center">
+                        <span><strong data-translate="mean_label">Arithmetic Mean</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="mean_tooltip">ⓘ</span></span>
+                        <span id="result-mean" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span><strong data-translate="geo_mean_label">Geometric Mean (CAGR)</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="geo_mean_tooltip">ⓘ</span></span>
+                        <span id="result-gm" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="std_dev_label">Standard Deviation (Risk)</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="std_dev_tooltip">ⓘ</span></span>
+                         <span id="result-std" class="font-mono font-semibold text-highlight-neutral" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="downside_dev_label">Downside Deviation (Target=0)</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="downside_dev_tooltip">ⓘ</span></span>
+                         <span id="result-dsd" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="variance_label">Variance</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="variance_tooltip">ⓘ</span></span>
+                         <span id="result-var" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="cv_label">Coefficient of Variation (CV)</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="cv_tooltip">ⓘ</span></span>
+                         <span id="result-cv" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="mdd_label">Max Drawdown (MDD)</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="mdd_tooltip">ⓘ</span></span>
+                         <span id="result-mdd" class="font-mono font-semibold text-highlight-neg" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="mdd_period_label">MDD Period (steps)</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="mdd_period_tooltip">ⓘ</span></span>
+                         <span id="result-mdd-period" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="skewness_label">Skewness</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="skewness_tooltip">ⓘ</span></span>
+                         <span id="result-skew" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="kurtosis_label">Excess Kurtosis</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="kurtosis_tooltip">ⓘ</span></span>
+                         <span id="result-kurt" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="var_label">Historical VaR 5%</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="var_tooltip">ⓘ</span></span>
+                         <span id="result-var5" class="font-mono font-semibold text-highlight-neg" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="var_95_label">Historical Gain 95%</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="var_95_tooltip">ⓘ</span></span>
+                         <span id="result-var95" class="font-mono font-semibold text-highlight-pos" data-translate="value_invalid">N/A</span>
+                    </div>
+                     <div class="flex justify-between items-center">
+                        <span><strong data-translate="cvar_label">Conditional VaR (5%)</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="cvar_tooltip">ⓘ</span></span>
+                        <span id="result-cvar5" class="font-mono font-semibold text-highlight-neg" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="max_gain_label">Max Gain</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="max_gain_tooltip">ⓘ</span></span>
+                         <span id="result-max-gain" class="font-mono font-semibold text-highlight-pos" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                         <span><strong data-translate="sharpe_label">Sharpe Ratio</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="sharpe_tooltip">ⓘ</span></span>
+                         <span id="result-sharpe" class="font-mono font-semibold text-highlight-neutral" data-translate="value_invalid">N/A</span>
+                    </div>
+                     <div class="flex justify-between items-center">
+                         <span><strong data-translate="sortino_label">Sortino Ratio</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="sortino_tooltip">ⓘ</span></span>
+                         <span id="result-sortino" class="font-mono font-semibold text-highlight-neutral" data-translate="value_invalid">N/A</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span><strong data-translate="omega_label">Omega Ratio</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="omega_tooltip">ⓘ</span></span>
+                        <span id="result-omega" class="font-mono font-semibold text-highlight-neutral" data-translate="value_invalid">N/A</span>
+                    </div>
+
+                    <div class="border-t border-dark-border mt-3 pt-3">
+                        <h3 class="text-md font-semibold mb-1 text-center" data-translate="benchmark_analysis_title">Benchmark Analysis</h3>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="tracking_error_label">Tracking Error</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="tracking_error_tooltip">ⓘ</span></span>
+                            <span id="result-tracking-error" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="information_ratio_label">Information Ratio</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="information_ratio_tooltip">ⓘ</span></span>
+                            <span id="result-information-ratio" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-dark-border mt-3 pt-3">
+                        <h3 class="text-md font-semibold mb-1 text-center" data-translate="regression_results_title">Regression Analysis (CAPM)</h3>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="beta_label">Beta (β)</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="beta_tooltip">ⓘ</span></span>
+                            <span id="result-beta" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="alpha_label">Alpha (α)</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="alpha_tooltip">ⓘ</span></span>
+                            <span id="result-alpha" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="rsquared_label">R-squared (R²)</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="rsquared_tooltip">ⓘ</span></span>
+                            <span id="result-rsquared" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="capm_expected_return_label">CAPM Expected Return</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="capm_expected_return_tooltip">ⓘ</span></span>
+                            <span id="result-capm-er" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="reg_stderr_label">Std. Error of Regression</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="reg_stderr_tooltip">ⓘ</span></span>
+                            <span id="result-reg-stderr" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="beta_t_stat_label">Beta t-statistic</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="beta_t_stat_tooltip">ⓘ</span></span>
+                            <span id="result-beta-tstat" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="beta_p_value_label">Beta p-value</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="beta_p_value_tooltip">ⓘ</span></span>
+                            <span id="result-beta-pvalue" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="alpha_t_stat_label">Alpha t-statistic</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="alpha_t_stat_tooltip">ⓘ</span></span>
+                            <span id="result-alpha-tstat" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="alpha_p_value_label">Alpha p-value</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="alpha_p_value_tooltip">ⓘ</span></span>
+                            <span id="result-alpha-pvalue" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-dark-border mt-3 pt-3">
+                        <h3 class="text-md font-semibold mb-1 text-center" data-translate="advanced_metrics_title">Advanced CFA Metrics</h3>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="treynor_ratio_label">Treynor Ratio</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="treynor_ratio_tooltip">ⓘ</span></span>
+                            <span id="result-treynor" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="calmar_ratio_label">Calmar Ratio</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="calmar_ratio_tooltip">ⓘ</span></span>
+                            <span id="result-calmar" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="jensen_alpha_label">Jensen's Alpha</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="jensen_alpha_tooltip">ⓘ</span></span>
+                            <span id="result-jensen-alpha" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="m2_measure_label">M2 Measure</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="m2_measure_tooltip">ⓘ</span></span>
+                            <span id="result-m2" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span><strong data-translate="alpha_t_stat_label">Alpha t-statistic</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="alpha_t_stat_tooltip">ⓘ</span></span>
+                            <span id="result-alpha-t-stat" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                        </div>
+                    </div>
+                </div>
+                 <div class="mt-auto pt-4 space-y-2 border-t border-dark-border">
+                    <button id="export-results-button" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed transition duration-150" data-translate="save_results_button_unified" disabled>Save Results</button>
+                </div>
+            </aside>
+
+            <main class="lg:col-span-2 order-first lg:order-last space-y-6">
+                <!-- Tab Content Containers -->
+                <div id="asset-analysis-tab" class="tab-content active space-y-6">
+                    <section id="asset-data-input-section" class="bg-dark-card p-4 rounded-lg shadow-md z-10 relative">
+                        <h2 class="text-lg font-semibold mb-3" data-translate="add_data_title">Asset Return Data (%)</h2>
+                        <div class="mb-6">
+                            <p class="text-sm text-dark-text-muted mb-3" data-translate="add_data_hint">(Enter multiple values separated by comma, space, or newline)</p>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <textarea id="value-entry" class="flex-grow bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary resize-none" rows="2" data-translate-placeholder="add_data_placeholder" placeholder="Values..."></textarea>
+                                <button id="add-button" class="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150 sm:self-end" data-translate="add_button">Add</button>
+                            </div>
+                        </div>
+                        <div class="relative my-4">
+                            <div class="absolute inset-0 flex items-center" aria-hidden="true"><div class="w-full border-t border-dark-border"></div></div>
+                            <div class="relative flex justify-center"><span class="bg-dark-card px-2 text-sm text-dark-text-muted" data-translate="or_divider_text">OR</span></div>
+                        </div>
+                        <div id="dedicated-file-drop-area" class="cursor-pointer">
+                            <i class="fas fa-file-arrow-down drop-icon"></i>
+                            <p data-translate="drop_zone_prompt_dedicated_asset">Drag & drop your Asset CSV/Excel/TXT file here</p>
+                            <input type="file" id="file-importer-input-asset" accept=".csv, .xlsx, .xls, .txt" style="display: none;">
+                        </div>
+                    </section>
+
+                    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div id="market-data-input-section" class="bg-dark-card p-4 rounded-lg shadow-md z-10 relative">
+                            <h2 class="text-lg font-semibold mb-3" data-translate="add_market_data_title">Market Return Data (%) (for CAPM)</h2>
+                            <p class="text-sm text-dark-text-muted mb-3" data-translate="add_market_data_hint_short">Count must match asset data.</p>
+                            <div class="flex flex-col sm:flex-row gap-2 mb-2">
+                                <textarea id="market-value-entry" class="flex-grow bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary resize-none" rows="2" data-translate-placeholder="add_market_data_placeholder" placeholder="Market return values..."></textarea>
+                                <button id="add-market-data-button" class="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150 sm:self-end" data-translate="add_market_data_button">Add Market Data</button>
+                            </div>
+                            <div id="market-data-display" class="bg-[#2b2b2b] p-2 rounded border border-dark-border overflow-y-auto h-20 text-sm mb-2">
+                                <p class="text-dark-text-muted text-center p-1 market-data-placeholder" data-translate="market_list_empty_option">Market data list is empty.</p>
+                            </div>
+                            <button id="clear-market-data-button" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-xs disabled:opacity-50" data-translate="clear_market_data_button" disabled>Clear Market Data</button>
+                        </div>
+
+                        <div id="benchmark-data-input-section" class="bg-dark-card p-4 rounded-lg shadow-md z-10 relative">
+                            <h2 class="text-lg font-semibold mb-3" data-translate="add_benchmark_data_title">Benchmark Return Data (%) (for Benchmark Analysis)</h2>
+                            <p class="text-sm text-dark-text-muted mb-3" data-translate="add_benchmark_data_hint_short">Count must match asset data.</p>
+                            <div class="flex flex-col sm:flex-row gap-2 mb-2">
+                                <textarea id="benchmark-value-entry" class="flex-grow bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary resize-none" rows="2" data-translate-placeholder="add_benchmark_data_placeholder" placeholder="Benchmark return values..."></textarea>
+                                <button id="add-benchmark-data-button" class="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150 sm:self-end" data-translate="add_benchmark_data_button">Add Benchmark Data</button>
+                            </div>
+                            <div id="benchmark-data-display" class="bg-[#2b2b2b] p-2 rounded border border-dark-border overflow-y-auto h-20 text-sm mb-2">
+                                <p class="text-dark-text-muted text-center p-1 benchmark-data-placeholder" data-translate="benchmark_list_empty_option">Benchmark data list is empty.</p>
+                            </div>
+                            <button id="clear-benchmark-data-button" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-xs disabled:opacity-50" data-translate="clear_benchmark_data_button" disabled>Clear Benchmark Data</button>
+                        </div>
+                    </section>
+
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-semibold mb-3" data-translate="edit_delete_title">Edit / Delete Asset Data:</h2>
+                        <div class="flex flex-col sm:flex-row flex-wrap gap-2 items-center">
+                            <select id="edit-select" title="     " class="flex-grow bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 w-full sm:w-auto mb-2 sm:mb-0" disabled>
+                                <option value="" data-translate="select_option">Select...</option>
+                            </select>
+                            <input type="text" id="edit-value-entry" class="w-full sm:w-32 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 mb-2 sm:mb-0" data-translate-placeholder="edit_placeholder" placeholder="New value" disabled>
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <button id="save-edit-button" class="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded disabled:opacity-50 disabled:cursor-not-allowed transition duration-150" data-translate="save_button" disabled>Save</button>
+                                <button id="delete-button" class="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded disabled:opacity-50 disabled:cursor-not-allowed transition duration-150" data-translate="delete_button" disabled>Delete</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="rf-rate" class="text-base font-semibold whitespace-nowrap" data-translate="rf_title">Risk-Free Rate (% Annually):</label>
+                            <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="rf_tooltip">ⓘ</span>
+                            <input type="text" id="rf-rate" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" value="2.0" data-translate-placeholder="rf_placeholder" placeholder="e.g. 2.5">
+                        </div>
+                        <div>
+                            <label for="expected-market-return" class="text-base font-semibold whitespace-nowrap" data-translate="expected_market_return_title">Expected Market Return (% Annually):</label>
+                            <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="expected_market_return_tooltip">ⓘ</span>
+                            <input type="text" id="expected-market-return" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" value="8.0" data-translate-placeholder="expected_market_return_placeholder" placeholder="e.g. 8.0">
+                        </div>
+                    </section>
+
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md flex flex-col" style="min-height: 200px;">
+                        <div class="flex justify-between items-center mb-3">
+                            <h2 class="text-xl font-semibold" data-translate="data_list_title">Current Asset Data List:</h2>
+                            <button id="clear-list-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed transition duration-150" data-translate="clear_list_button" disabled>Clear Asset List</button>
+                        </div>
+                        <div id="data-display" class="flex-grow bg-[#2b2b2b] p-2 rounded border border-dark-border overflow-y-auto h-40 text-sm">
+                             <p class="text-dark-text-muted text-center p-4 data-placeholder" data-translate="list_empty_option">List Empty</p>
+                        </div>
+                    </section>
+
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md space-y-4">
+                         <button id="calculate-button" class="w-full bg-highlight-neutral hover:bg-amber-600 text-gray-900 font-bold py-3 px-4 rounded text-lg transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed" data-translate="calculate_button">Calculate Metrics</button>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button id="plot-hist-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed" data-translate="plot_hist_button" disabled>Plot Histogram</button>
+                            <button id="plot-box-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed" data-translate="plot_box_button" disabled>Plot Box Plot</button>
+                            <button id="plot-equity-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed" data-translate="plot_equity_button" disabled>Plot Equity Curve</button>
+                            <button id="plot-qq-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed" data-translate="plot_qq_button" disabled>Plot QQ-Plot</button>
+                            <button id="plot-regression-button" class="col-span-2 md:col-span-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed" data-translate="plot_regression_button" disabled>Regression Plot</button>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- New Tab Content: Equity Valuation -->
+                <div id="equity-valuation-tab" class="tab-content space-y-6">
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-semibold mb-3" data-translate="equity_valuation_title">Equity Valuation</h2>
+                        <p class="text-sm text-dark-text-muted mb-4" data-translate="equity_valuation_hint">Calculations related to equity valuation and fundamental analysis.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="current-dividend" class="text-base font-semibold" data-translate="current_dividend_label">Current Dividend (D0):</label>
+                                <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="current_dividend_tooltip">ⓘ</span>
+                                <input type="number" id="current-dividend" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g. 1.5">
+                            </div>
+                            <div>
+                                <label for="dividend-growth-rate" class="text-base font-semibold" data-translate="dividend_growth_rate_label">Dividend Growth Rate (g) %:</label>
+                                <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="dividend_growth_rate_tooltip">ⓘ</span>
+                                <input type="number" id="dividend-growth-rate" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g. 5">
+                            </div>
+                            <div>
+                                <label for="required-return-equity" class="text-base font-semibold" data-translate="required_return_equity_label">Required Rate of Return (r) %:</label>
+                                <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="required_return_equity_tooltip">ⓘ</span>
+                                <input type="number" id="required-return-equity" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g. 10">
+                            </div>
+                            <div>
+                                <label for="earnings-per-share" class="text-base font-semibold" data-translate="earnings_per_share_label">Earnings Per Share (EPS):</label>
+                                <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="earnings_per_share_tooltip">ⓘ</span>
+                                <input type="number" id="earnings-per-share" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g. 3.0">
+                            </div>
+                            <div>
+                                <label for="current-share-price" class="text-base font-semibold" data-translate="current_share_price_label">Current Share Price:</label>
+                                <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="current_share_price_tooltip">ⓘ</span>
+                                <input type="number" id="current-share-price" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g. 50">
+                            </div>
+                        </div>
+                        <button id="calculate-equity-button" class="w-full bg-highlight-neutral hover:bg-amber-600 text-gray-900 font-bold py-2 px-4 rounded text-lg transition duration-150" data-translate="calculate_equity_button">Calculate Equity Valuation</button>
+                    </section>
+
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-semibold mb-3" data-translate="equity_results_title">Equity Valuation Results</h2>
+                        <div id="equity-results-display" class="space-y-1.5 text-sm">
+                            <div class="flex justify-between items-center">
+                                <span><strong data-translate="ddm_value_label">DDM Value (P0):</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="ddm_value_tooltip">ⓘ</span></span>
+                                <span id="result-ddm-value" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span><strong data-translate="ggm_value_label">GGM Value (P0):</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="ggm_value_tooltip">ⓘ</span></span>
+                                <span id="result-ggm-value" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span><strong data-translate="pe_ratio_label">P/E Ratio:</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="pe_ratio_tooltip">ⓘ</span></span>
+                                <span id="result-pe-ratio" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- New Tab Content: Fixed Income -->
+                <div id="fixed-income-tab" class="tab-content space-y-6">
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-semibold mb-3" data-translate="fixed_income_title">Fixed Income & Bonds</h2>
+                        <p class="text-sm text-dark-text-muted mb-4" data-translate="fixed_income_hint">Calculations related to bonds, including yield to maturity, duration, and valuation.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="face-value" class="text-base font-semibold" data-translate="face_value_label">Face Value:</label>
+                                <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="face_value_tooltip">ⓘ</span>
+                                <input type="number" id="face-value" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" value="1000" placeholder="e.g. 1000">
+                            </div>
+                            <div>
+                                <label for="coupon-rate" class="text-base font-semibold" data-translate="coupon_rate_label">Coupon Rate (% Annually):</label>
+                                <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="coupon_rate_tooltip">ⓘ</span>
+                                <input type="number" id="coupon-rate" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g. 5">
+                            </div>
+                            <div>
+                                <label for="years-to-maturity" class="text-base font-semibold" data-translate="years_to_maturity_label">Years to Maturity:</label>
+                                <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="years_to_maturity_tooltip">ⓘ</span>
+                                <input type="number" id="years-to-maturity" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g. 10">
+                            </div>
+                            <div>
+                                <label for="market-price-bond" class="text-base font-semibold" data-translate="market_price_bond_label">Current Market Price:</label>
+                                <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="market_price_bond_tooltip">ⓘ</span>
+                                <input type="number" id="market-price-bond" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g. 950">
+                            </div>
+                            <div>
+                                <label for="ytm-input" class="text-base font-semibold" data-translate="ytm_input_label">Yield to Maturity (YTM) %:</label>
+                                <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="ytm_input_tooltip">ⓘ</span>
+                                <input type="number" id="ytm-input" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g. 6">
+                            </div>
+                            <div>
+                                <label for="coupon-frequency" class="text-base font-semibold" data-translate="coupon_frequency_label">Coupon Frequency:</label>
+                                <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="coupon_frequency_tooltip">ⓘ</span>
+                                <select id="coupon-frequency" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="1" data-translate="annual">Annual</option>
+                                    <option value="2" data-translate="semi_annual">Semi-Annual</option>
+                                    <option value="4" data-translate="quarterly">Quarterly</option>
+                                    <option value="12" data-translate="monthly">Monthly</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button id="calculate-bond-button" class="w-full bg-highlight-neutral hover:bg-amber-600 text-gray-900 font-bold py-2 px-4 rounded text-lg transition duration-150" data-translate="calculate_bond_button">Calculate Bond Metrics</button>
+                    </section>
+
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-semibold mb-3" data-translate="fixed_income_results_title">Fixed Income Results</h2>
+                        <div id="fixed-income-results-display" class="space-y-1.5 text-sm">
+                            <div class="flex justify-between items-center">
+                                <span><strong data-translate="bond_price_label">Bond Price:</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="bond_price_tooltip">ⓘ</span></span>
+                                <span id="result-bond-price" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span><strong data-translate="ytm_label">Yield to Maturity (YTM):</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="ytm_tooltip">ⓘ</span></span>
+                                <span id="result-ytm" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span><strong data-translate="macaulay_duration_label">Macaulay Duration:</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="macaulay_duration_tooltip">ⓘ</span></span>
+                                <span id="result-macaulay-duration" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span><strong data-translate="modified_duration_label">Modified Duration:</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="modified_duration_tooltip">ⓘ</span></span>
+                                <span id="result-modified-duration" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span><strong data-translate="convexity_label">Convexity:</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="convexity_tooltip">ⓘ</span></span>
+                                <span id="result-convexity" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button id="plot-bond-price-yield-button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed" data-translate="plot_bond_price_yield_button" disabled>Plot Bond Price-Yield Curve</button>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- New Tab Content: Portfolio Management -->
+                <div id="portfolio-management-tab" class="tab-content space-y-6">
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-semibold mb-3" data-translate="portfolio_management_title">Portfolio Management</h2>
+                        <p class="text-sm text-dark-text-muted mb-4" data-translate="portfolio_management_hint">Calculations related to portfolio returns, risk, and correlation.</p>
+
+                        <div id="portfolio-assets-container" class="space-y-4 mb-4">
+                            <!-- Asset input fields will be dynamically added here -->
+                        </div>
+                        <button id="add-portfolio-asset-button" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150 mb-4" data-translate="add_portfolio_asset_button">Add Asset to Portfolio</button>
+
+                        <div class="md:col-span-2">
+                            <label for="portfolio-rf-rate" class="text-base font-semibold whitespace-nowrap" data-translate="rf_title">Risk-Free Rate (% Annually):</label>
+                            <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="rf_tooltip">ⓘ</span>
+                            <input type="text" id="portfolio-rf-rate" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" value="2.0" data-translate-placeholder="rf_placeholder" placeholder="e.g. 2.5">
+                        </div>
+
+                        <button id="calculate-portfolio-button" class="w-full bg-highlight-neutral hover:bg-amber-600 text-gray-900 font-bold py-2 px-4 rounded text-lg transition duration-150" data-translate="calculate_portfolio_button">Calculate Portfolio Metrics</button>
+                    </section>
+
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-semibold mb-3" data-translate="portfolio_results_title">Portfolio Results</h2>
+                        <div id="portfolio-results-display" class="space-y-1.5 text-sm">
+                            <div class="flex justify-between items-center">
+                                <span><strong data-translate="portfolio_expected_return_label">Portfolio Expected Return:</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="portfolio_expected_return_tooltip">ⓘ</span></span>
+                                <span id="result-portfolio-expected-return" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span><strong data-translate="portfolio_stddev_label">Portfolio Standard Deviation:</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="portfolio_stddev_tooltip">ⓘ</span></span>
+                                <span id="result-portfolio-stddev" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span><strong data-translate="portfolio_variance_label">Portfolio Variance:</strong> <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="portfolio_variance_tooltip">ⓘ</span></span>
+                                <span id="result-portfolio-variance" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div id="financial-strategy-tab" class="tab-content space-y-6">
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <div class="section-heading">
+                            <div><span class="section-eyebrow" data-translate="fundamental_workspace">FUNDAMENTAL WORKSPACE</span><h2 class="text-xl font-semibold mb-2" data-translate="financial_strategy_title">Fundamental Analysis</h2></div>
+                            <span class="data-badge" data-translate="manual_data_badge">Manual data</span>
+                        </div>
+                        <p class="text-sm text-dark-text-muted mb-4" data-translate="financial_input_hint">Enter financial statement values using the same currency and scale for all monetary amounts. Enter income statement flows for the reporting year and opening/closing balance sheet values where requested. CFA-style turnover, ROA, ROE and cash-cycle ratios use average balances. Zero denominators or missing required balances display as N/A. CapEx = closing fixed assets − opening fixed assets + depreciation.</p>
+                        <p class="text-xs text-dark-text-muted mb-4" data-translate="company_shares_scale_guidance">Enter share count in the same scale as statement amounts (for example, shares in millions when financials are in millions). Enter prices per actual share.</p>
+                        <div class="periodization-control"><label for="financial-period-months" data-translate="financial_period_months">Financial period length (months)</label><input id="financial-period-months" type="number" min="1" max="60" step="1" value="12"><label for="financial-flow-basis" data-translate="financial_flow_basis_label">Flow presentation</label><select id="financial-flow-basis"><option value="annualized" data-translate="financial_flow_annualized">Annualized (linear)</option><option value="reported" data-translate="financial_flow_reported">Reported period</option></select><span data-translate="financial_period_hint">Linear annualization can conceal seasonality; compare reported-period values when needed.</span></div>
+                        <div class="quote-panel" aria-label="Optional market quote lookup" data-aria-label-key="quote_widget_title">
+                            <div class="quote-panel-head"><div><span class="section-eyebrow" data-translate="quote_widget_kicker">OPTIONAL MARKET DATA</span><h3 class="text-lg font-semibold" data-translate="quote_widget_title">TradingView market snapshot</h3></div><span class="data-badge" data-translate="quote_on_demand_badge">On demand</span></div>
+                            <p class="text-sm text-dark-text-muted" data-translate="quote_widget_hint">Fetch an indicative quote and selected market ratios by TradingView symbol. Financial statements remain user-entered.</p>
+                            <div class="quote-search-row"><label for="tradingview-symbol" data-translate="quote_symbol_label">TradingView symbol</label><input id="tradingview-symbol" type="text" class="bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-2" placeholder="NASDAQ:AAPL" autocomplete="off"><button id="fetch-tradingview-quote" class="bg-primary hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded" data-translate="quote_fetch_button">Load quote</button><button id="apply-tradingview-price" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded hidden" data-translate="quote_use_price_button">Use last price</button></div>
+                            <div id="tradingview-quote-status" class="text-sm text-dark-text-muted" aria-live="polite" data-translate="quote_idle">Manual analysis works offline. Start the local connector to load a market quote.</div>
+                            <div id="tradingview-quote-snapshot" class="quote-snapshot-grid hidden"></div>
+                        </div>
+                        <div id="financial-input-groups" class="space-y-5"></div>
+                        <button id="calculate-financial-strategy" class="w-full mt-5 bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150" data-translate="calculate_financial_metrics">Calculate Financial Metrics</button>
+                    </section>
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md analyst-dashboard" id="analyst-dashboard">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="analyst_dashboard_kicker">ANALYST DASHBOARD</span><h2 class="text-xl font-semibold mb-2" data-translate="analyst_dashboard_title">Investment research brief</h2></div><span id="analyst-data-status" class="data-badge" data-translate="analyst_waiting">Awaiting calculated inputs</span></div>
+                        <p class="text-sm text-dark-text-muted mb-4" data-translate="analyst_dashboard_hint">A structured read-through of earnings quality, return drivers, balance-sheet risk, and valuation context. Signals are prompts for analyst review, not recommendations.</p>
+                        <div id="analyst-dashboard-kpis" class="analyst-kpi-grid"><article class="analyst-kpi"><span data-translate="analyst_kpi_roic">ROIC / WACC</span><strong>—</strong><small data-translate="analyst_waiting">Awaiting calculated inputs</small></article><article class="analyst-kpi"><span data-translate="analyst_kpi_roe">DuPont ROE</span><strong>—</strong><small data-translate="analyst_waiting">Awaiting calculated inputs</small></article><article class="analyst-kpi"><span data-translate="analyst_kpi_cash">CFO / net income</span><strong>—</strong><small data-translate="analyst_waiting">Awaiting calculated inputs</small></article><article class="analyst-kpi"><span data-translate="analyst_kpi_leverage">Net debt / EBITDA</span><strong>—</strong><small data-translate="analyst_waiting">Awaiting calculated inputs</small></article></div>
+                        <div id="analyst-review-notes" class="analyst-review-grid"><p data-translate="analyst_empty">Calculate the financial statements to generate prioritized review notes.</p></div>
+                    </section>
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md" id="company-comparison-workspace">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="peer_workspace_kicker">MULTI-COMPANY WORKSPACE</span><h2 class="text-xl font-semibold mb-2" data-translate="peer_workspace_title">Company Financials & Peer Comparison</h2></div><span class="data-badge" data-translate="local_records_badge">Private local records</span></div>
+                        <p class="text-sm text-dark-text-muted mb-4" data-translate="peer_workspace_intro">Build a multi-year financial history for each company. Compare aligned fiscal periods, inspect peer dispersion, and chart trends for any supported metric.</p>
+                        <div class="analysis-guidance mb-4"><h3 class="font-semibold mb-2" data-translate="peer_guidance_title">Analyst checks before comparing</h3><ul class="space-y-1 text-sm text-dark-text-muted"><li data-translate="peer_guidance_currency">Use the same currency and scale across companies; no FX or unit conversion is performed.</li><li data-translate="peer_guidance_period">Align fiscal year ends, reporting periods, and trailing versus annual data before interpreting peers.</li><li data-translate="peer_guidance_accounting">Check accounting policies, one-off items, leases, acquisitions, and restatements for comparability.</li><li data-translate="peer_guidance_direction">A higher ratio is not always better. Interpret valuation, leverage, liquidity, and cash-cycle measures in context.</li></ul></div>
+                        <ol class="comparison-steps mb-4"><li data-translate="comparison_step_one">Add each company once and set its reporting currency and scale.</li><li data-translate="comparison_step_two">For every company, save a consistent financial data set for each fiscal year.</li><li data-translate="comparison_step_three">Choose the same period label, metric family, and trend metric to compare peers.</li></ol>
+                        <div class="comparison-toolbar">
+                            <label><span data-translate="company_name_label">Company name</span><input id="company-name" type="text" maxlength="80" autocomplete="organization" placeholder="e.g., Acme Corporation" data-translate-placeholder="company_name_placeholder"></label>
+                            <label><span data-translate="company_ticker_label">Ticker / identifier</span><input id="company-ticker" type="text" maxlength="24" placeholder="e.g., ACME" data-translate-placeholder="company_ticker_placeholder"></label>
+                            <label><span data-translate="company_industry_label">Industry / peer group</span><input id="company-industry" type="text" maxlength="60" placeholder="e.g., Software" data-translate-placeholder="company_industry_placeholder"></label>
+                            <label><span data-translate="company_currency_label">Reporting currency</span><input id="company-currency" type="text" maxlength="12" placeholder="e.g., USD" data-translate-placeholder="company_currency_placeholder"></label>
+                            <label><span data-translate="company_scale_label">Financial scale</span><select id="company-scale"><option value="units" data-translate="scale_units">Units</option><option value="thousands" data-translate="scale_thousands">Thousands</option><option value="millions" data-translate="scale_millions">Millions</option></select></label>
+                            <label><span data-translate="company_period_label">Fiscal period</span><input id="company-period" type="text" maxlength="20" placeholder="e.g., FY2025" data-translate-placeholder="company_period_placeholder"></label>
+                            <label><span data-translate="company_select_label">Edit company</span><select id="company-select"><option value="" data-translate="company_select_empty">Select a company</option></select></label>
+                            <label><span data-translate="period_select_label">Load saved period</span><select id="company-period-select"><option value="__new__" data-translate="new_period_option">New period</option></select></label>
+                        </div>
+                        <div class="report-basis-panel" aria-labelledby="report-basis-heading">
+                            <div class="report-basis-heading"><div><span class="section-eyebrow" data-translate="report_basis_kicker">REPORT BASIS & QUALITY</span><h3 id="report-basis-heading" data-translate="report_basis_title">Period metadata and assurance</h3></div><p data-translate="report_basis_hint">Record period length, statement scope, and assurance so comparisons remain on a like-for-like basis.</p></div>
+                            <div class="comparison-toolbar report-basis-fields">
+                                <label><span data-translate="period_months_label">Period length (months)</span><input id="company-period-months" type="number" min="1" max="60" step="1" inputmode="numeric" placeholder="12"></label>
+                                <label><span data-translate="reporting_basis_label">Statement scope</span><select id="company-reporting-basis"><option value="consolidated" data-translate="basis_consolidated">Consolidated</option><option value="separate" data-translate="basis_separate">Separate</option></select></label>
+                                <label><span data-translate="assurance_status_label">Report status</span><select id="company-assurance-status"><option value="unaudited" selected data-translate="assurance_unaudited">Unaudited</option><option value="audited" data-translate="assurance_audited">Audited</option><option value="reviewed" data-translate="assurance_reviewed">Reviewed</option><option value="forecast" data-translate="assurance_forecast">Management forecast</option></select></label>
+                                <label><span data-translate="audit_opinion_label">Audit opinion</span><select id="company-audit-opinion"><option value="unmodified" data-translate="opinion_unmodified">Unmodified</option><option value="qualified" data-translate="opinion_qualified">Qualified</option><option value="adverse" data-translate="opinion_adverse">Adverse</option><option value="disclaimer" data-translate="opinion_disclaimer">Disclaimer</option><option value="not_applicable" data-translate="opinion_na">Not applicable / not stated</option></select></label>
+                                <label><span data-translate="source_document_label">Source document</span><input id="company-source-document" type="text" maxlength="160" placeholder="e.g., Annual report FY2025" data-translate-placeholder="source_document_placeholder"><input id="company-source-pdf" type="file" accept="application/pdf,.pdf" class="source-pdf-picker" aria-label="Select source PDF" data-aria-label-key="source_pdf_picker"><small data-translate="source_pdf_note">Select a PDF to record its filename only; financial figures are not extracted.</small></label>
+                                <label><span data-translate="source_page_label">Source page / note</span><input id="company-source-page" type="text" maxlength="40" placeholder="e.g., p. 42, Note 18" data-translate-placeholder="source_page_placeholder"></label>
+                                <label class="restated-flag"><input id="company-restated" type="checkbox"><span data-translate="restated_label">Restated comparative data</span></label>
+                            </div>
+                            <p class="report-basis-footnote" data-translate="report_basis_caveat">A matching year label does not make periods comparable if their length, consolidation scope, accounting basis, or assurance differs.</p>
+                        </div>
+                        <div class="comparison-actions">
+                            <button id="prefill-codal-report-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="prefill_codal_report_button">Start from attached Codal report metadata</button>
+                            <button id="create-company-button" type="button" class="bg-primary hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded" data-translate="create_company_button">Add company</button>
+                            <button id="save-company-period-button" type="button" class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-3 rounded" data-translate="save_period_button">Save financial period</button>
+                            <button id="delete-company-button" type="button" class="bg-red-700 hover:bg-red-800 text-white font-semibold py-2 px-3 rounded" data-translate="delete_company_button">Delete selected company</button>
+                            <button id="copy-current-financials-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="copy_current_financials_button">Copy current analysis inputs</button>
+                            <button id="load-company-period-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="load_company_period_button">Load selected period into analysis</button>
+                            <button id="export-company-data-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="export_company_data_button">Export backup</button>
+                            <button id="import-company-data-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="import_company_data_button">Import backup</button>
+                            <input id="import-company-data-file" class="hidden" type="file" accept="application/json,.json">
+                        </div>
+                        <p id="company-data-status" class="text-sm text-dark-text-muted my-3" aria-live="polite" data-translate="company_data_empty">No companies saved yet. Add a company to start a peer set.</p>
+                        <div id="company-period-inputs" class="space-y-5"></div>
+                        <div class="comparison-divider"></div>
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="peer_analysis_kicker">PEER & TREND ANALYSIS</span><h3 class="text-lg font-semibold" data-translate="peer_analysis_title">Compare companies and track performance</h3></div></div>
+                        <div class="comparison-toolbar comparison-analysis-controls">
+                            <label><span data-translate="compare_industry_label">Peer universe</span><select id="compare-industry-select"><option value="__all__" data-translate="compare_all_companies">All companies</option></select></label>
+                            <label><span data-translate="compare_period_label">Comparison period</span><select id="compare-period-select"><option value="" data-translate="no_periods_option">No periods available</option></select></label>
+                            <label><span data-translate="compare_group_label">Metric family</span><select id="compare-group-select"><option value="dividend" data-translate="compare_group_dividend">Per share & shareholder returns</option><option value="profitability" data-translate="compare_group_profitability">Profitability</option><option value="valuation" data-translate="compare_group_valuation">Valuation</option><option value="leverage" data-translate="compare_group_leverage">Leverage</option><option value="liquidity" data-translate="compare_group_liquidity">Liquidity</option><option value="efficiency" data-translate="compare_group_efficiency">Efficiency & cash cycle</option><option value="cashflow" data-translate="compare_group_cashflow">Cash flow & investment</option></select></label>
+                            <label><span data-translate="compare_trend_metric_label">Trend chart metric</span><select id="compare-trend-metric"></select></label>
+                        </div>
+                        <div id="company-comparison-warning" class="comparison-warning hidden" role="status"></div>
+                        <div id="company-peer-insights" class="peer-insight-grid"></div>
+                        <div id="company-comparison-table" class="overflow-x-auto text-sm"><p class="text-dark-text-muted" data-translate="comparison_empty">Add at least one company and save a financial period to begin comparing.</p></div>
+                        <h3 class="text-lg font-semibold mt-6 mb-2" data-translate="peer_trend_chart_title">Multi-year peer trends</h3>
+                        <div id="company-trend-chart" class="w-full min-h-[300px] md:min-h-[400px]"></div>
+                    </section>
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md advanced-valuation-panel">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="advanced_valuation_kicker">VALUATION & DIAGNOSTICS</span><h2 class="text-xl font-semibold mb-2" data-translate="advanced_valuation_title">Scenario DCF & model checks</h2></div><span class="data-badge">FCFF · 3 scenarios</span></div>
+                        <p class="text-sm text-dark-text-muted mb-4" data-translate="advanced_valuation_hint">Build bear, base, and bull FCFF scenarios from annualized financials. Assumptions are editable; this is a sensitivity model, not a target price or investment recommendation.</p>
+                        <div class="dcf-assumption-grid">
+                          <fieldset class="dcf-scenario"><legend data-translate="dcf_bear">Bear case</legend><label><span data-translate="dcf_growth">Revenue growth (%)</span><input data-dcf="bear-growth" type="number" step="0.5" placeholder="−5"></label><label><span data-translate="dcf_margin">EBIT margin (%)</span><input data-dcf="bear-margin" type="number" step="0.5" placeholder="8"></label><label><span data-translate="dcf_wacc">WACC (%)</span><input data-dcf="bear-wacc" type="number" step="0.25" placeholder="14"></label><label><span data-translate="dcf_terminal">Terminal growth (%)</span><input data-dcf="bear-terminal" type="number" step="0.25" placeholder="1"></label></fieldset>
+                          <fieldset class="dcf-scenario"><legend data-translate="dcf_base">Base case</legend><label><span data-translate="dcf_growth">Revenue growth (%)</span><input data-dcf="base-growth" type="number" step="0.5" placeholder="5"></label><label><span data-translate="dcf_margin">EBIT margin (%)</span><input data-dcf="base-margin" type="number" step="0.5" placeholder="12"></label><label><span data-translate="dcf_wacc">WACC (%)</span><input data-dcf="base-wacc" type="number" step="0.25" placeholder="10"></label><label><span data-translate="dcf_terminal">Terminal growth (%)</span><input data-dcf="base-terminal" type="number" step="0.25" placeholder="2"></label></fieldset>
+                          <fieldset class="dcf-scenario"><legend data-translate="dcf_bull">Bull case</legend><label><span data-translate="dcf_growth">Revenue growth (%)</span><input data-dcf="bull-growth" type="number" step="0.5" placeholder="10"></label><label><span data-translate="dcf_margin">EBIT margin (%)</span><input data-dcf="bull-margin" type="number" step="0.5" placeholder="16"></label><label><span data-translate="dcf_wacc">WACC (%)</span><input data-dcf="bull-wacc" type="number" step="0.25" placeholder="8"></label><label><span data-translate="dcf_terminal">Terminal growth (%)</span><input data-dcf="bull-terminal" type="number" step="0.25" placeholder="2.5"></label></fieldset>
+                        </div>
+                        <details class="dcf-driver-panel" open><summary data-translate="dcf_drivers_title">Operating drivers & cost of capital</summary><div class="dcf-driver-grid"><label><span data-translate="dcf_nwc_sales">Operating NWC / sales (%)</span><input id="dcf-nwc-sales" type="number" step="0.5" placeholder="Derive from current assets − current liabilities"></label><label><span data-translate="dcf_capex_sales">CapEx / sales (%)</span><input id="dcf-capex-sales" type="number" step="0.5" placeholder="Derive from reported / estimated CapEx"></label><label><span data-translate="dcf_da_sales">D&amp;A / sales (%)</span><input id="dcf-da-sales" type="number" step="0.5" placeholder="Derive from reported depreciation"></label><label><span data-translate="dcf_risk_free">Risk-free rate (%)</span><input id="dcf-risk-free" type="number" step="0.1" placeholder="e.g. 4.0"></label><label><span data-translate="dcf_beta">Levered beta (β)</span><input id="dcf-beta" type="number" step="0.05" placeholder="e.g. 1.1"></label><label><span data-translate="dcf_erp">Equity risk premium (%)</span><input id="dcf-erp" type="number" step="0.1" placeholder="e.g. 5.0"></label><label><span data-translate="dcf_cost_debt">Pre-tax cost of debt (%)</span><input id="dcf-cost-debt" type="number" step="0.1" placeholder="Optional; otherwise manual WACC"></label><label class="dcf-derived-toggle"><input id="dcf-use-derived-wacc" type="checkbox"><span data-translate="dcf_derive_wacc">Derive WACC from CAPM and market capital structure</span></label></div><p id="dcf-wacc-status" class="dcf-driver-note" data-translate="dcf_wacc_manual_note">Manual scenario WACC is active. Derived WACC requires risk-free rate, beta, equity risk premium, cost of debt, tax rate, share price, shares, and interest-bearing debt.</p></details>
+                        <div class="dcf-global-controls"><label><span data-translate="dcf_horizon">Forecast horizon (years)</span><input id="dcf-years" type="number" min="3" max="10" value="5"></label><label><span data-translate="dcf_tax">Tax rate (%)</span><input id="dcf-tax" type="number" min="0" max="100" step="0.5" placeholder="Use reported tax rate"></label><button id="run-dcf-button" type="button" class="bg-primary hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded" data-translate="dcf_run">Calculate scenario DCF</button></div>
+                        <div id="dcf-results" class="dcf-results" aria-live="polite"><p class="text-dark-text-muted" data-translate="dcf_empty">Enter and calculate fundamental inputs first, then run the DCF scenarios.</p></div><div id="dcf-chart" class="w-full min-h-[280px]"></div><div id="dcf-sensitivity" class="overflow-x-auto"></div>
+                        <p class="report-basis-footnote" data-translate="dcf_caveat">FCFF = NOPAT + D&amp;A − CapEx − change in operating NWC. NWC is forecast as a share of revenue; the opening proxy uses current assets less current liabilities unless overridden. Review seasonality, leases, taxes, and terminal value concentration.</p>
+                    </section>
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="quality_kicker">INPUT INTEGRITY</span><h2 class="text-xl font-semibold mb-2" data-translate="quality_title">Financial statement quality checks</h2></div><span class="data-badge" data-translate="quality_not_rating">Diagnostics, not a rating</span></div>
+                        <p class="text-sm text-dark-text-muted mb-3" data-translate="quality_hint">Checks flag missing, inconsistent, or unusual inputs. They do not determine fraud, credit quality, or investment merit.</p><div id="financial-quality-checks" class="quality-check-grid"><p class="text-dark-text-muted" data-translate="quality_empty">Calculate metrics to run input diagnostics.</p></div>
+                    </section>
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="workbook_kicker">BULK DATA ENTRY</span><h2 class="text-xl font-semibold mb-2" data-translate="workbook_title">Multi-company CSV / Excel import</h2></div><span class="data-badge" data-translate="offline_badge">Offline · local files</span></div>
+                        <p class="text-sm text-dark-text-muted mb-3" data-translate="workbook_hint">Use one row per company-period-field. Required headers: company, period, field, value. Optional: ticker, currency, scale, months, scope, status, opinion. Preview and validate before applying records.</p>
+                        <div class="workbook-toolbar"><input id="financial-workbook-file" type="file" accept=".csv,.xlsx,.xls" aria-label="Select CSV or Excel workbook" data-aria-label-key="workbook_file_label"><button id="preview-financial-workbook" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold px-3 py-2 rounded" data-translate="workbook_preview">Preview & validate</button><button id="apply-financial-workbook" type="button" class="bg-primary hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded" data-translate="workbook_apply" disabled>Apply validated rows</button><button id="download-financial-template" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold px-3 py-2 rounded" data-translate="workbook_template">Download template</button></div>
+                        <div id="financial-workbook-preview" class="overflow-x-auto text-sm" aria-live="polite"></div>
+                    </section>
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <div class="section-heading"><h2 class="text-xl font-semibold mb-3" data-translate="calculated_metrics_title">Calculated Metrics</h2><span class="data-badge" data-translate="cfa_framework_badge">CFA ratio framework</span></div>
+                        <p id="financial-coverage" class="text-sm text-dark-text-muted mb-3" aria-live="polite" data-translate="financial_coverage_empty">Complete relevant inputs to calculate more metrics.</p>
+                        <div id="financial-kpis" class="kpi-grid"></div>
+                        <div id="financial-results" class="overflow-x-auto text-sm">
+                            <p class="text-dark-text-muted" data-translate="financial_results_empty">Enter values and calculate to view the results.</p>
+                        </div>
+                    </section>
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                            <h2 class="text-xl font-semibold" data-translate="metric_chart_title">Metric Chart</h2>
+                            <label class="flex items-center gap-2 text-sm" for="financial-chart-group"><span data-translate="chart_group_label">Chart group</span>
+                                <select id="financial-chart-group" class="bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-2">
+                                    <option value="returns" data-translate="chart_returns"></option>
+                                    <option value="per-share" data-translate="chart_per_share"></option>
+                                    <option value="capital-structure" data-translate="chart_capital_structure"></option>
+                                    <option value="debt-profile" data-translate="chart_debt_profile">Debt profile</option>
+                                    <option value="debt-structure" data-translate="chart_debt_structure">Debt structure ratios</option>
+                                    <option value="profitability" data-translate="chart_profitability"></option>
+                                    <option value="valuation" data-translate="chart_valuation"></option>
+                                    <option value="efficiency" data-translate="chart_efficiency"></option>
+                                    <option value="cash-flow" data-translate="chart_cash_flow"></option>
+                                    <option value="cash-yield" data-translate="chart_cash_yield"></option>
+                                    <option value="cash-quality" data-translate="chart_cash_quality"></option>
+                                    <option value="cash-quality-percent" data-translate="chart_cash_quality_percent">Cash quality ratios (%)</option>
+                                    <option value="cash-cycle" data-translate="chart_cash_cycle"></option>
+                                    <option value="working-capital" data-translate="chart_working_capital"></option>
+                                    <option value="investment" data-translate="chart_investment"></option>
+                                </select>
+                            </label>
+                        </div>
+                        <div id="financial-chart" class="w-full min-h-[300px] md:min-h-[400px]"></div>
+                    </section>
+                </div>
+            </main>
+        </div>
+
+        <footer class="mt-6 py-2 px-4 text-center text-sm text-dark-text-muted border-t border-dark-border">
+            <span id="status-bar" data-translate="status_ready">Ready.</span>
+        </footer>
+
+        <div id="plotModal" class="fixed inset-0 z-40 hidden items-center justify-center bg-black/70" aria-labelledby="plotModalLabel" aria-modal="true" role="dialog">
+            <div class="bg-dark-card text-dark-text rounded-lg shadow-xl max-w-4xl w-full mx-4 p-1 flex flex-col" style="max-height: 90vh;">
+                 <div class="flex justify-between items-center border-b border-dark-border pb-2 mb-1 px-4 pt-2">
+                    <h5 class="text-xl font-semibold" id="plotModalLabel" data-translate="plot_modal_title">Chart</h5>
+                    <button type="button" id="plotModalCloseButton" class="text-dark-text-muted hover:text-white text-2xl font-bold" aria-label="Close" data-aria-label-key="close_button">&times;</button>
+                 </div>
+                 <div class="p-1 flex-grow overflow-hidden">
+                    <div id="plot-container" class="w-full h-full min-h-[300px] md:min-h-[400px] lg:min-h-[450px]"></div> </div>
+            </div>
+        </div>
+    </div> <script src="script.js"></script>
+    <script src="vendor/sweetalert2.all.min.js"></script>
+</body>
+</html>
