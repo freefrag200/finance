@@ -2,11 +2,13 @@
 
 ## Open the app
 
-Open `index.html` in a modern browser. No BAT file, Node.js, local web server, CDN, or install step is required. All analysis, charts, and manual statement entry work offline. The optional TradingView snapshot makes a direct internet request from the browser only after you select **Load quote**. It uses an unofficial community screener, may be delayed, and does not retrieve financial statements. Verify market data independently.
+Open `index.html` in a modern browser. No BAT file, Node.js, local web server, CDN, or install step is required. All analysis, charts, and manual statement entry work offline. The optional TradingView snapshot makes a direct internet request from the browser only after you select **Load quote**. It uses an unofficial community screener, may be delayed, and does not retrieve financial statements. Verify market data independently. Market quotes can fail when the browser or network blocks the request; manual analysis remains available.
 
 ## CFA-style fundamental analysis
 
 Enter monetary inputs in a consistent currency and scale. Enter share count in the same scale as financial statement amounts (for example, millions of shares with financials reported in millions); enter market price per actual share. Enter annual income statement and cash flow values for the same reporting period. Opening and closing balances are used where averages are required for return and turnover analysis. Missing inputs and undefined ratios are reported as not available. The chart selector keeps metrics with different units on separate charts. Each metric has expandable CFA-style interpretation and caveats.
+
+Risk statistics require a selected return frequency and assume observations are equally spaced and ordered. Volatility and excess-return ratios are annualized from that frequency; historical VaR/CVaR remain per observation and maximum drawdown is path-dependent. Geometric mean is calculated in log space for numerical stability. Missing or invalid returns are not silently removed from drawdown paths.
 
 ### Multi-company comparison
 
@@ -28,6 +30,10 @@ All statements remain manually entered; the workspace does not extract figures f
 - **Bulk import:** the local CSV/XLSX importer expects one row per company-period-field. Required headers are `company, period, field, value`; **Download template** provides the exact header row. Use app field IDs such as `net-income`, `operating-cash-flow`, or `reported-capex`. Preview and validate before applying; matching company/currency/period records merge and duplicate field values are replaced.
 - **Peer lens and provenance:** set an industry/peer group to filter comparisons and trends. Q1/median/Q3 require at least four observations with comparable report basis, currency, and scale. Store source document/page and mark restated comparative data.
 
+### Financial models workspace
+
+The **Financial Models** tab separates foundational calculators from company statement analysis. The time-value-of-money tool solves for FV, PV, or equal periodic PMT using a nominal annual rate, compounding/payment frequency, and ordinary-annuity or annuity-due timing. Positive periodic contributions are modeled as deposits. CAPM and a three-factor APT illustration report expected-return estimates and their spread. The formula library summarizes WACC, FCFF, EVA/ROIC, DuPont, Gordon growth, CCC, bond duration/convexity, and Sharpe. APT factor premia must be supplied by the analyst; the app does not estimate factors or premiums from market data.
+
 PDF figures are not automatically parsed. Record source page references and verify entered values against the audited statement. DCF is an editable scenario engine, not a forecast, fair-value conclusion, or investment recommendation.
 
 ### ابزارهای تکمیلی تحلیلگر
@@ -42,17 +48,23 @@ PDF figures are not automatically parsed. Record source page references and veri
 - **ورود گروهی:** واردکنندهٔ محلی CSV/XLSX برای هر شرکت، دوره و قلم یک سطر می‌خواهد. سرستون‌های اجباری `company, period, field, value` هستند؛ **دریافت قالب** سرستون‌های دقیق را می‌سازد. شناسهٔ قلم‌ها مانند `net-income`، `operating-cash-flow` و `reported-capex` را به‌کار ببرید. ابتدا پیش‌نمایش و اعتبارسنجی کنید؛ سپس ثبت کنید. رکوردهای شرکت/ارز/دورهٔ یکسان ادغام و مقدار تکراری هر قلم جایگزین می‌شود.
 - **همتایان و منبع:** صنعت را برای فیلتر جدول و روند انتخاب کنید. چارک‌ها فقط با حداقل چهار مشاهده و مبنای گزارش، ارز و مقیاس قابل‌مقایسه ارائه می‌شوند. سند و صفحهٔ منبع را ثبت و داده‌های مقایسه‌ای تجدیدارائه‌شده را علامت بزنید.
 
+### فضای مدل‌های مالی
+
+تب **مدل‌های مالی** محاسبه‌گرهای پایه را از تحلیل صورت‌های مالی شرکت جدا می‌کند. ابزار ارزش زمانی پول FV، PV یا PMT دوره‌ای برابر را با نرخ اسمی سالانه، تناوب ترکیب/پرداخت و زمان‌بندی مستمری عادی یا پیش‌پرداخت محاسبه می‌کند؛ واریز دوره‌ای مثبت به‌عنوان سپرده در نظر گرفته می‌شود. CAPM و نمونه سه‌عاملی APT بازده موردانتظار و فاصله دو برآورد را نشان می‌دهند. کتابخانه فرمول WACC، FCFF، EVA/ROIC، DuPont، رشد گوردون، CCC، دیرش/محدبیت اوراق و شارپ را خلاصه می‌کند. صرف ریسک عامل‌های APT باید توسط تحلیل‌گر وارد شود؛ برنامه آن‌ها را از داده بازار برآورد نمی‌کند.
+
 ارقام PDF خودکار استخراج نمی‌شوند؛ صفحهٔ منبع را ثبت و داده‌های واردشده را با صورت حسابرسی‌شده تطبیق دهید. DCF ابزار سناریویی با مفروضات قابل‌ویرایش است، نه پیش‌بینی قطعی، ارزش منصفانه یا توصیهٔ سرمایه‌گذاری.
 
 ## محیط محلی
 
 ## اجرای برنامه
 
-فایل `index.html` را با یک مرورگر جدید باز کنید. به فایل BAT، Node.js، وب‌سرور محلی، CDN یا نصب نیاز نیست. تحلیل‌ها، نمودارها و ورود دستی صورت‌ها آفلاین کار می‌کنند. نمای اختیاری TradingView پس از فشردن **دریافت قیمت** مستقیماً از مرورگر درخواست اینترنتی می‌فرستد. این screener جامعه‌محور و غیررسمی است، ممکن است تأخیر داشته باشد و صورت‌های مالی را ارائه نمی‌کند؛ داده‌های بازار را مستقل بررسی کنید.
+فایل `index.html` را با یک مرورگر جدید باز کنید. به فایل BAT، Node.js، وب‌سرور محلی، CDN یا نصب نیاز نیست. تحلیل‌ها، نمودارها و ورود دستی صورت‌ها آفلاین کار می‌کنند. نمای اختیاری TradingView پس از فشردن **دریافت قیمت** مستقیماً از مرورگر درخواست اینترنتی می‌فرستد. این screener جامعه‌محور و غیررسمی است، ممکن است تأخیر داشته باشد و صورت‌های مالی را ارائه نمی‌کند؛ داده‌های بازار را مستقل بررسی کنید. اگر مرورگر یا شبکه درخواست را مسدود کند، دریافت قیمت انجام نمی‌شود و ورود دستی همچنان در دسترس است.
 
 ## تحلیل بنیادی به سبک CFA
 
 برای همهٔ مبالغ از ارز و مقیاس یکسان استفاده کنید و تعداد سهام را نیز هم‌مقیاس با ارقام صورت مالی وارد کنید؛ مثلاً میلیون سهم برای صورت‌های مالی به میلیون. قیمت بازار هر سهم را به واحد واقعی وارد کنید. جریان‌های صورت سود و زیان و جریان نقد را برای دورهٔ یکسان و ماندهٔ ابتدا و انتهای دوره را برای نسبت‌های میانگین وارد کنید. برای هر شاخص، راهنمای تفسیر و محدودیت‌ها بازشدنی است.
+
+برای آمار ریسک، تناوب بازده را انتخاب کنید و داده‌ها را با فاصله‌های زمانی یکسان و به‌ترتیب وارد کنید. نوسان و نسبت‌های بازده مازاد بر مبنای تناوب انتخابی سالانه می‌شوند؛ VaR/CVaR تاریخی در سطح هر مشاهده باقی می‌مانند و افت سرمایه به مسیر بازده وابسته است. میانگین هندسی برای پایداری عددی با لگاریتم محاسبه می‌شود و دادهٔ نامعتبر از مسیر افت سرمایه بی‌صدا حذف نمی‌شود.
 
 ### مقایسهٔ چند شرکت
 

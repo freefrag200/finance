@@ -15,7 +15,7 @@ let nextAssetId = 1; // For unique IDs for portfolio assets
 // --- Translations Dictionary ---
 const texts = {
     theme_switch_light:{en:'Light mode',fa:'حالت روشن'}, theme_switch_dark:{en:'Dark mode',fa:'حالت تیره'},
-    workspace_navigation:{en:'Analysis workspaces',fa:'فضاهای تحلیل'}, nav_section_title:{en:'RESEARCH WORKSPACES',fa:'فضاهای پژوهشی'}, nav_local_badge:{en:'LOCAL',fa:'محلی'}, nav_local_note:{en:'Research data stays on this device',fa:'داده‌های پژوهش روی همین دستگاه می‌مانند'},
+    workspace_navigation:{en:'Analysis workspaces',fa:'فضاهای تحلیل'},
     record_saved_at:{en:'saved {date}',fa:'ذخیره {date}'}, dcf_terminal_share:{en:'PV of terminal value / EV',fa:'ارزش فعلی بخش پایانی / ارزش بنگاه'}, dcf_year:{en:'Year',fa:'سال'},
     analyst_dashboard_kicker:{en:'ANALYST DASHBOARD',fa:'داشبورد تحلیل‌گر'}, analyst_dashboard_title:{en:'Investment research brief',fa:'خلاصه پژوهش سرمایه‌گذاری'}, analyst_dashboard_hint:{en:'A structured read-through of earnings quality, return drivers, balance-sheet risk, and valuation context. Signals are prompts for analyst review, not recommendations.',fa:'مروری ساختاریافته بر کیفیت سود، محرک‌های بازده، ریسک ترازنامه و ارزش‌گذاری. این سیگنال‌ها برای بررسی تحلیل‌گر هستند و توصیه سرمایه‌گذاری نیستند.'}, analyst_waiting:{en:'Awaiting calculated inputs',fa:'در انتظار محاسبه داده‌ها'}, analyst_empty:{en:'Calculate the financial statements to generate prioritized review notes.',fa:'برای تولید نکات اولویت‌بندی‌شده، صورت‌های مالی را محاسبه کنید.'}, analyst_strong:{en:'Supportive signal',fa:'سیگنال مساعد'}, analyst_review:{en:'Analyst review',fa:'نیازمند بررسی تحلیل‌گر'}, analyst_missing:{en:'Insufficient data',fa:'داده ناکافی'}, analyst_kpi_roic:{en:'ROIC / WACC',fa:'ROIC / WACC'}, analyst_kpi_roe:{en:'DuPont ROE',fa:'ROE دوپون'}, analyst_kpi_cash:{en:'CFO / net income',fa:'CFO / سود خالص'}, analyst_kpi_leverage:{en:'Net debt / EBITDA',fa:'بدهی خالص / EBITDA'}, analyst_roic_wacc:{en:'ROIC is {roic}% versus base-case WACC of {wacc}%. The spread is {spread} percentage points; confirm both use consistent tax, currency, and nominal/real assumptions.',fa:'ROIC برابر {roic}٪ در برابر WACC سناریوی پایه {wacc}٪ است. فاصله {spread} واحد درصد است؛ سازگاری مالیات، ارز و مفروضات اسمی/واقعی را بررسی کنید.'}, analyst_roe_driver:{en:'DuPont ROE is {roe}%: net margin {margin}%, asset turnover {turnover}×, and equity multiplier {multiplier}×. Identify which driver explains the change over time.',fa:'ROE دوپون برابر {roe}٪ است: حاشیه خالص {margin}٪، گردش دارایی {turnover}× و ضریب حقوق صاحبان سهام {multiplier}×. محرک تغییرات زمانی را مشخص کنید.'}, analyst_cash_conversion:{en:'CFO / net income is {value}×. Review working-capital timing and non-cash accruals, especially when earnings and operating cash diverge.',fa:'نسبت CFO به سود خالص {value}× است. زمان‌بندی سرمایه در گردش و اقلام تعهدی غیرنقدی را، به‌خصوص هنگام واگرایی سود و وجه نقد عملیاتی، بررسی کنید.'}, analyst_leverage:{en:'Net debt / EBITDA is {value}×. Test debt maturities, lease treatment, covenant headroom, and refinancing capacity.',fa:'نسبت بدهی خالص به EBITDA برابر {value}× است. سررسید بدهی، اجاره، حاشیه شروط و توان تأمین مالی مجدد را بسنجید.'}, analyst_quality:{en:'{count} statement checks need review. Resolve missing, inconsistent, or unusual model inputs before relying on the valuation.',fa:'{count} کنترل صورت مالی نیازمند بررسی است. پیش از اتکا به ارزش‌گذاری، ورودی‌های ناقص، ناسازگار یا نامتعارف مدل را بازبینی کنید.'}, analyst_quality_clear:{en:'No configured statement check is currently flagged; this does not establish that the statements are error-free.',fa:'در حال حاضر هیچ‌یک از کنترل‌های تعریف‌شده علامت‌دار نیست؛ این موضوع بدون‌خطا بودن صورت‌ها را اثبات نمی‌کند.'}, analyst_fcf:{en:'FCF is {value}; compare its multi-year trend with reinvestment needs and earnings growth.',fa:'FCF برابر {value} است؛ روند چندساله آن را با نیاز سرمایه‌گذاری مجدد و رشد سود مقایسه کنید.'},
     advanced_valuation_kicker:{en:'VALUATION & DIAGNOSTICS',fa:'ارزش‌گذاری و عارضه‌یابی'}, advanced_valuation_title:{en:'Scenario DCF & model checks',fa:'ارزش‌گذاری DCF سناریویی و کنترل مدل'}, advanced_valuation_hint:{en:'Enter your own bear, base, and bull assumptions; no company-specific forecasts are invented. FCFF uses annualized inputs. This is a sensitivity model, not a target price or investment recommendation.',fa:'مفروضات سناریوهای بدبینانه، پایه و خوش‌بینانه را خودتان وارد کنید؛ پیش‌بینی شرکت‌محور ساختگی نمی‌شود. ورودی‌های FCFF سالانه‌سازی می‌شوند. این مدل حساسیت است، نه هدف قیمت یا توصیه سرمایه‌گذاری.'},
@@ -516,6 +516,11 @@ const texts = {
 
 // English labels for the new workspace panels.
 Object.assign(texts, {
+    results_title:{en:'Risk & Return Summary',fa:'خلاصه ریسک و بازده'},add_market_data_hint_short:{en:'Use the same dates and order as the asset returns; the observation count must match.',fa:'تاریخ و ترتیب را با بازده دارایی یکسان کنید؛ تعداد مشاهدات باید برابر باشد.'},add_benchmark_data_hint_short:{en:'Use the same dates and order as the asset returns; the observation count must match.',fa:'تاریخ و ترتیب را با بازده دارایی یکسان کنید؛ تعداد مشاهدات باید برابر باشد.'},regression_results_title:{en:'Market Regression & CAPM',fa:'رگرسیون بازار و CAPM'},
+    fundamental_nav_label:{en:'Jump to analysis section',fa:'رفتن به بخش تحلیل'},fundamental_side_nav_title:{en:'Fundamental analysis',fa:'بخش‌های تحلیل بنیادی'},fundamental_nav_brief:{en:'Research brief',fa:'خلاصه تحلیل'},fundamental_nav_peers:{en:'Company comparison',fa:'مقایسه شرکت‌ها'},fundamental_nav_dcf:{en:'Scenario DCF',fa:'ارزش‌گذاری DCF'},fundamental_nav_quality:{en:'Data quality',fa:'کیفیت داده'},fundamental_nav_import:{en:'Import data',fa:'ورود گروهی داده'},fundamental_nav_metrics:{en:'Metrics & chart',fa:'شاخص‌ها و نمودار'},
+    dcf_nwc_placeholder:{en:'Derived from average receivables + inventory − payables',fa:'برآورد از میانگین دریافتنی + موجودی − پرداختنی'},
+    dcf_caveat:{en:'FCFF = NOPAT + D&A − CapEx − change in operating NWC. NWC is forecast as a share of revenue; the opening proxy uses average trade receivables + inventory − trade payables when available, excluding cash and financing balances. Review seasonality, leases, taxes, and terminal value concentration.',fa:'FCFF = NOPAT + استهلاک − CapEx − تغییر سرمایه در گردش عملیاتی. سرمایه در گردش به‌صورت سهمی از فروش پیش‌بینی می‌شود؛ مبنای اولیه، در صورت وجود، میانگین دریافتنی تجاری + موجودی − پرداختنی تجاری است و وجه نقد و اقلام تأمین مالی را کنار می‌گذارد. فصل‌پذیری، اجاره، مالیات و تمرکز ارزش پایانی را بررسی کنید.'},
+    return_frequency_label:{en:'Return observation frequency',fa:'تناوب مشاهدهٔ بازده'},return_frequency_note:{en:'Choose the interval represented by each return observation. Volatility and excess-return ratios are annualized; historical tail measures remain per observation.',fa:'تناوب هر مشاهدهٔ بازده را انتخاب کنید. نوسان و نسبت‌های بازده مازاد سالانه‌سازی می‌شوند؛ معیارهای دنبالهٔ تاریخی در سطح هر مشاهده باقی می‌مانند.'},return_frequency_help:{en:'Choose the interval represented by each return observation. The annual risk-free rate is converted to that interval; volatility and ratios are annualized using the selected frequency.',fa:'تناوب هر مشاهدهٔ بازده را انتخاب کنید. نرخ بدون ریسک سالانه به همان دوره تبدیل و نوسان و نسبت‌ها بر اساس تناوب انتخابی سالانه‌سازی می‌شوند.'},frequency_select:{en:'Select frequency…',fa:'تناوب را انتخاب کنید…'},return_frequency_required:{en:'Select the observation frequency before calculating annualized risk and return metrics.',fa:'برای محاسبهٔ سالانه‌شدهٔ بازده و ریسک، ابتدا تناوب مشاهده را انتخاب کنید.'},frequency_annual:{en:'Annual',fa:'سالانه'},frequency_quarterly:{en:'Quarterly',fa:'فصلی'},frequency_monthly:{en:'Monthly',fa:'ماهانه'},frequency_weekly:{en:'Weekly',fa:'هفتگی'},frequency_daily:{en:'Daily (252 trading days)',fa:'روزانه (۲۵۲ روز معاملاتی)'},
     brand_kicker:{en:'CFA ANALYTICS'}, close_button:{en:'Close'}, offline_workspace:{en:'Offline workspace'}, fundamental_workspace:{en:'FUNDAMENTAL WORKSPACE'}, manual_data_badge:{en:'Manual data'},
     financial_strategy_title:{en:'Fundamental Analysis'}, financial_guidance_heading:{en:'Interpretation & caveats'}, financial_guidance_expand:{en:'Analyst guidance'}, financial_input_hint:{en:'Use one currency and scale for all amounts. Enter income-statement flows for the reporting year and opening/closing balance-sheet values where requested. CFA-style ROA, ROE, turnover and cash-cycle ratios use average balances. Missing inputs or zero denominators display as N/A.'},
     calculate_financial_metrics:{en:'Calculate Financial Metrics'}, calculated_metrics_title:{en:'Calculated Metrics'}, cfa_framework_badge:{en:'CFA ratio framework'},
@@ -545,7 +550,7 @@ Object.assign(texts, {
     company_import_confirm:{en:'Restoring this backup will replace all company records currently saved in this browser.'}, company_unsaved_status:{en:'Unsaved changes · save this period before leaving it.'}, company_unsaved_confirm:{en:'Discard unsaved changes to this company period?'}, company_copy_success:{en:'Current analysis values copied into the company period editor.'}, company_load_missing:{en:'Select a company and a saved fiscal period first.'}, copy_current_financials_button:{en:'Copy current analysis inputs'}, load_company_period_button:{en:'Load selected period into analysis'}, company_unsaved_discard_button:{en:'Discard changes'}, company_shares_scale_guidance:{en:'Enter share count in the same scale as statement amounts (for example, shares in millions when financials are in millions). Enter prices per actual share.'},
     metadata_months_invalid:{en:'Period length must be a whole number from 1 to 60 months.'}, annualized_metrics_note:{en:'Flow-based metrics and valuation multiples use a 12-month equivalent; reported balances and period-end prices are not annualized.'}
 });
-Object.assign(texts, { quote_widget_kicker:{en:'OPTIONAL LIVE DATA'}, quote_widget_hint:{en:'Look up a TradingView market snapshot directly from this browser when online. Financial statement analysis and charts remain available offline.'}, quote_idle:{en:'Market quotes need an internet connection. Open this HTML file directly; no launcher is required.'}, quote_server_required:{en:'Market quotes need an internet connection. Open this HTML file directly; no launcher is required.'}, quote_no_data:{en:'No quote data was returned for this symbol.'}, quote_source_note:{en:'Unofficial TradingView community screener · may be delayed · no financial statements or investment advice'} });
+Object.assign(texts, { quote_widget_kicker:{en:'OPTIONAL LIVE DATA'}, quote_widget_hint:{en:'Look up an indicative TradingView market snapshot directly from this browser when online. Financial statement analysis and charts remain available offline.'}, quote_idle:{en:'Manual analysis works offline. Load quotes only when you have an internet connection.'}, quote_server_required:{en:'This browser could not reach the optional TradingView service. Check your internet connection or continue with manual inputs.'}, quote_no_data:{en:'No quote data was returned for this symbol.'}, quote_source_note:{en:'Unofficial TradingView community screener · may be delayed · no financial statements or investment advice'} });
 
 // Persian localization for the full user interface (kept local for offline use).
 Object.assign(texts,{quality_period_reported:{en:'flow items shown as reported for this period; peer comparisons remain annualized',fa:'اقلام جریانی به شکل گزارش‌شده این دوره نمایش داده می‌شوند؛ مقایسه همتایان همچنان سالانه‌سازی می‌شود'},analyst_stale:{en:'Inputs changed · recalculate the statement analysis',fa:'ورودی‌ها تغییر کرده‌اند · تحلیل صورت‌های مالی را دوباره محاسبه کنید'},analyst_basis_warning:{en:'Flow metrics are shown for a {months}-month period and should not be compared directly with an annual WACC.',fa:'شاخص‌های جریانی برای دوره {months}ماهه نمایش داده شده‌اند و نباید مستقیماً با WACC سالانه مقایسه شوند.'},dcf_stale:{en:'Assumptions or financial inputs changed · rerun the DCF model',fa:'مفروضات یا ورودی‌های مالی تغییر کرده‌اند · مدل DCF را دوباره اجرا کنید'},dcf_capex_sales:{en:'CapEx / sales (%)',fa:'مخارج سرمایه‌ای / فروش (٪)'},dcf_da_sales:{en:'D&A / sales (%)',fa:'استهلاک / فروش (٪)'},dcf_invalid:{en:'DCF unavailable. Confirm positive sales and shares, valid debt, cash and tax inputs, nonnegative CapEx and D&A intensity assumptions, working-capital data, and WACC greater than terminal growth.',fa:'DCF در دسترس نیست. فروش و تعداد سهام مثبت، بدهی و وجه نقد و مالیات معتبر، شدت غیرمنفی CapEx و استهلاک، داده سرمایه در گردش و WACC بزرگ‌تر از رشد پایدار را بررسی کنید.'},dcf_share_warning:{en:'Enter a positive share count; current share price is needed only to calculate implied change.',fa:'تعداد سهام مثبت لازم است؛ قیمت جاری سهم فقط برای محاسبه تغییر ضمنی نیاز است.'}});
@@ -681,7 +686,32 @@ Object.assign(faTexts, {
     trend_currency_warning:'این شاخص واحد پولی دارد. ارز یا مقیاس داده‌های همتایان یکسان نیست؛ نمودار ترکیبی تا همسان‌سازی ورودی‌ها نمایش داده نمی‌شود.', peer_insight_advice:'راهنمای تفسیر تحلیلگر', company_records_loaded:'{company}: {count} دورهٔ مالی ذخیره‌شده.',
     company_import_confirm:'بازیابی این نسخه، همهٔ پرونده‌های شرکت ذخیره‌شده در این مرورگر را جایگزین می‌کند.', company_unsaved_status:'تغییرات ذخیره‌نشده است؛ پیش از خروج از این دوره آن را ذخیره کنید.', company_unsaved_confirm:'تغییرات ذخیره‌نشدهٔ این دورهٔ مالی کنار گذاشته شود؟', company_copy_success:'ورودی‌های تحلیل فعلی در فرم دورهٔ مالی شرکت کپی شدند.', company_load_missing:'ابتدا یک شرکت و دورهٔ مالی ذخیره‌شده انتخاب کنید.', copy_current_financials_button:'کپی ورودی‌های تحلیل فعلی', load_company_period_button:'بارگذاری دوره در تحلیل تک‌شرکتی', company_unsaved_discard_button:'کنارگذاشتن تغییرات', company_shares_scale_guidance:'تعداد سهام را هم‌مقیاس با مبالغ صورت‌ها وارد کنید؛ مثلاً اگر ارقام مالی به میلیون است، تعداد سهام هم به میلیون باشد. قیمت هر سهم را به واحد واقعی وارد کنید.', metadata_months_invalid:'طول دوره باید عدد صحیحی بین ۱ تا ۶۰ ماه باشد.', annualized_metrics_note:'شاخص‌های جریانی و ضرایب ارزش‌گذاری به معادل ۱۲ماهه تبدیل می‌شوند؛ مانده‌های ترازنامه و قیمت‌های پایان دوره سالانه‌سازی نمی‌شوند.'
 });
-Object.assign(faTexts, { quote_widget_kicker:'داده زندهٔ اختیاری', quote_widget_hint:'در زمان اتصال اینترنت، نمای بازار TradingView مستقیماً از همین مرورگر دریافت می‌شود. تحلیل صورت‌های مالی و نمودارهای محلی آفلاین می‌مانند.', quote_idle:'قیمت بازار به اینترنت نیاز دارد. فایل HTML را مستقیم باز کنید؛ به راه‌انداز نیاز نیست.', quote_server_required:'قیمت بازار به اینترنت نیاز دارد. فایل HTML را مستقیم باز کنید؛ به راه‌انداز نیاز نیست.', quote_no_data:'برای این نماد دادهٔ قیمتی برنگشت.', quote_source_note:'دادهٔ screener جامعه‌محور و غیررسمی TradingView · احتمال تأخیر · بدون صورت مالی یا توصیه سرمایه‌گذاری' });
+Object.assign(faTexts, { quote_widget_kicker:'داده زندهٔ اختیاری', quote_widget_hint:'در زمان اتصال اینترنت، نمای بازار TradingView مستقیماً از همین مرورگر دریافت می‌شود. تحلیل صورت‌های مالی و نمودارهای محلی آفلاین می‌مانند.', quote_idle:'تحلیل دستی آفلاین است؛ دریافت قیمت فقط به اینترنت نیاز دارد.', quote_server_required:'این مرورگر به سرویس اختیاری TradingView دسترسی نداشت. اتصال اینترنت را بررسی کنید یا داده‌ها را دستی وارد کنید.', quote_no_data:'برای این نماد دادهٔ قیمتی برنگشت.', quote_source_note:'دادهٔ screener جامعه‌محور و غیررسمی TradingView · احتمال تأخیر · بدون صورت مالی یا توصیه سرمایه‌گذاری' });
+
+Object.assign(texts, {
+    tab_financial_models:{en:'Financial Models',fa:'مدل‌های مالی'}, help_tab_financial_models:{en:'Use the dedicated model workspace for time value of money (FV/PV/PMT), CAPM, APT, and an advanced formula reference. Results use only your entered assumptions.',fa:'در فضای مستقل مدل‌ها، ارزش زمانی پول (FV/PV/PMT)، CAPM، APT و مرجع فرمول‌های پیشرفته را بررسی کنید. نتایج فقط بر پایه مفروضات واردشده‌اند.'},
+    models_kicker:{en:'QUANTITATIVE TOOLKIT',fa:'جعبه‌ابزار کمی'},models_title:{en:'Financial Models & Formula Library',fa:'مدل‌های مالی و کتابخانه فرمول'},models_offline_badge:{en:'Local calculations',fa:'محاسبات محلی'},models_intro:{en:'A focused workspace for time value of money, asset-pricing models, and core valuation relationships. Enter assumptions explicitly and review the formula and limitations beside each result.',fa:'فضایی متمرکز برای ارزش زمانی پول، مدل‌های قیمت‌گذاری دارایی و روابط اصلی ارزش‌گذاری. مفروضات را شفاف وارد کنید و فرمول و محدودیت هر نتیجه را کنار آن ببینید.'},models_nav_tvm:{en:'Time Value of Money',fa:'ارزش زمانی پول'},models_nav_pricing:{en:'CAPM & APT',fa:'CAPM و APT'},models_nav_formula:{en:'Advanced formulas',fa:'فرمول‌های پیشرفته'},models_nav_label:{en:'Financial model sections',fa:'بخش‌های مدل مالی'},
+    tvm_kicker:{en:'TIME VALUE OF MONEY',fa:'ارزش زمانی پول'},tvm_title:{en:'Future Value, Present Value & Annuities',fa:'ارزش آتی، ارزش فعلی و مستمری‌ها'},tvm_description:{en:'Solve for FV, PV, periodic PMT, number of periods, or nominal annual rate. Use the same currency unit for all cash-flow inputs. Payments occur at the end or beginning of each period; the annual nominal rate is converted using the selected frequency.',fa:'FV، PV، پرداخت دوره‌ای، تعداد دوره‌ها یا نرخ اسمی سالانه را حل کنید. واحد پول همه جریان‌های نقدی باید یکسان باشد. پرداخت در ابتدا یا انتهای هر دوره انجام می‌شود و نرخ اسمی سالانه بر اساس تناوب انتخابی تبدیل می‌شود.'},tvm_target_label:{en:'Solve for',fa:'محاسبه کدام مقدار'},tvm_target_fv:{en:'Future Value (FV)',fa:'ارزش آتی (FV)'},tvm_target_pv:{en:'Present Value (PV)',fa:'ارزش فعلی (PV)'},tvm_target_pmt:{en:'Periodic Payment (PMT)',fa:'پرداخت دوره‌ای (PMT)'},tvm_target_n:{en:'Number of periods (N)',fa:'تعداد دوره‌ها (N)'},tvm_target_rate:{en:'Nominal annual rate (I/Y)',fa:'نرخ اسمی سالانه (I/Y)'},tvm_pv_label:{en:'Present value (PV)',fa:'ارزش فعلی (PV)'},tvm_pmt_label:{en:'Periodic contribution (PMT)',fa:'واریز دوره‌ای (PMT)'},tvm_fv_label:{en:'Future value target (FV)',fa:'ارزش آتی هدف (FV)'},tvm_rate_label:{en:'Nominal annual rate (%)',fa:'نرخ اسمی سالانه (٪)'},tvm_years_label:{en:'Investment horizon (years)',fa:'افق سرمایه‌گذاری (سال)'},tvm_frequency_label:{en:'Compounding / payment frequency',fa:'تناوب ترکیب / پرداخت'},freq_annual:{en:'Annual',fa:'سالانه'},freq_semiannual:{en:'Semi-annual',fa:'شش‌ماهه'},freq_quarterly:{en:'Quarterly',fa:'فصلی'},freq_monthly:{en:'Monthly',fa:'ماهانه'},freq_daily:{en:'Daily (365)',fa:'روزانه (۳۶۵)'},tvm_timing_label:{en:'Payment timing',fa:'زمان پرداخت'},tvm_ordinary:{en:'End of period (ordinary annuity)',fa:'انتهای دوره (مستمری عادی)'},tvm_due:{en:'Beginning of period (annuity due)',fa:'ابتدای دوره (مستمری پیش‌پرداخت)'},calculate_model_button:{en:'Calculate model',fa:'محاسبه مدل'},reset_model_button:{en:'Reset example',fa:'بازنشانی مثال'},tvm_result_label:{en:'Calculated result',fa:'نتیجه محاسبه'},tvm_result_hint:{en:'Enter assumptions and calculate to see the result.',fa:'مفروضات را وارد و محاسبه کنید تا نتیجه نمایش داده شود.'},tvm_period_suffix:{en:'periods',fa:'دوره'},tvm_solve_formulas:{en:'PV and PMT are rearranged from the FV equation; N and I/Y are solved numerically.',fa:'PV و PMT با بازآرایی معادله FV به‌دست می‌آیند؛ N و I/Y با روش عددی حل می‌شوند.'},tvm_formula_summary:{en:'Formula & assumptions',fa:'فرمول و مفروضات'},tvm_formula_note:{en:'Periodic rate i = nominal annual rate / m; number of periods n = years × m. FV = PV(1+i)^n + PMT × [((1+i)^n − 1)/i], adjusted by (1+i) for annuity due. Rate and period targets are solved numerically. No taxes, fees, inflation, or changing rates are modeled.',fa:'نرخ دوره‌ای i = نرخ اسمی سالانه / m؛ تعداد دوره‌ها n = سال × m. ارزش آتی = PV(1+i)^n + PMT × [((1+i)^n − 1)/i]؛ برای مستمری پیش‌پرداخت در (1+i) ضرب می‌شود. نرخ و تعداد دوره‌ها به‌صورت عددی حل می‌شوند. مالیات، کارمزد، تورم و تغییر نرخ در مدل نیست.'},tvm_invalid:{en:'Check the inputs: horizon must be positive, the periodic rate must be above −100%, and all non-target cash-flow inputs must be valid.',fa:'ورودی‌ها را بررسی کنید: افق باید مثبت، نرخ دوره‌ای بیشتر از ۱۰۰٪− و ورودی‌های جریان نقدی غیرهدف معتبر باشند.'},tvm_result_detail_fv:{en:'Future value includes the opening PV and equal periodic contributions. No taxes, fees, inflation, or changing rates are included.',fa:'ارزش آتی شامل PV اولیه و واریزهای دوره‌ای برابر است. مالیات، کارمزد، تورم و تغییر نرخ لحاظ نشده‌اند.'},tvm_result_detail_pv:{en:'Present value is the amount today equivalent to the target FV net of the assumed periodic contributions.',fa:'ارزش فعلی، مبلغ امروز معادل FV هدف پس از کسر اثر واریزهای دوره‌ای فرض‌شده است.'},tvm_result_detail_pmt:{en:'Required equal contribution each period to reach the target FV from the opening PV.',fa:'واریز برابر موردنیاز در هر دوره برای رسیدن از PV اولیه به FV هدف است.'},tvm_result_detail_n:{en:'Number of compounding/payment periods required to reach the target future value. Divide by the selected annual frequency to express the answer in years.',fa:'تعداد دوره‌های ترکیب/پرداخت لازم برای رسیدن به ارزش آتی هدف. برای تبدیل به سال، پاسخ را بر تناوب سالانه انتخاب‌شده تقسیم کنید.'},tvm_result_detail_rate:{en:'Implied nominal annual rate, found by numerically solving the periodic return consistent with the cash flows and target value.',fa:'نرخ اسمی سالانه ضمنی که با حل عددی بازده دوره‌ای سازگار با جریان‌های نقد و ارزش هدف به‌دست آمده است.'},
+    pricing_kicker:{en:'EXPECTED RETURN FRAMEWORKS',fa:'چارچوب‌های بازده موردانتظار'},pricing_title:{en:'CAPM & Arbitrage Pricing Theory (APT)',fa:'CAPM و نظریه قیمت‌گذاری آربیتراژ (APT)'},pricing_description:{en:'Compare a single-factor CAPM estimate with a multi-factor APT estimate. Factor risk premiums are entered directly in percentage points and betas measure sensitivity to each factor.',fa:'برآورد تک‌عاملی CAPM را با برآورد چندعاملی APT مقایسه کنید. صرف ریسک عامل‌ها را مستقیم به درصد وارد کنید و بتا حساسیت به هر عامل را نشان می‌دهد.'},pricing_rf:{en:'Risk-free rate (%)',fa:'نرخ بدون ریسک (٪)'},pricing_market:{en:'Expected market return (%)',fa:'بازده موردانتظار بازار (٪)'},pricing_market_beta:{en:'Market beta (βm)',fa:'بتای بازار (βm)'},apt_factor_title:{en:'APT factor exposures and premia',fa:'مواجهه‌ها و صرف ریسک عامل‌های APT'},apt_factor_one:{en:'Factor 1: market premium (%)',fa:'عامل ۱: صرف ریسک بازار (٪)'},apt_beta_one:{en:'Factor 1 beta',fa:'بتای عامل ۱'},apt_factor_two:{en:'Factor 2: size premium (%)',fa:'عامل ۲: صرف ریسک اندازه (٪)'},apt_beta_two:{en:'Factor 2 beta',fa:'بتای عامل ۲'},apt_factor_three:{en:'Factor 3: value premium (%)',fa:'عامل ۳: صرف ریسک ارزش (٪)'},apt_beta_three:{en:'Factor 3 beta',fa:'بتای عامل ۳'},capm_expected_label:{en:'CAPM expected return',fa:'بازده موردانتظار CAPM'},apt_expected_label:{en:'APT expected return',fa:'بازده موردانتظار APT'},capm_formula_short:{en:'Rf + βm × (Rm − Rf)',fa:'Rf + βm × (Rm − Rf)'},apt_formula_short:{en:'Rf + Σ(βk × factor premiumk)',fa:'Rf + Σ(βk × صرف ریسک عاملk)'},apt_capm_spread:{en:'APT − CAPM spread',fa:'فاصله APT − CAPM'},spread_interpretation:{en:'Model estimate difference; investigate factor definitions and sample.',fa:'اختلاف برآورد مدل‌ها؛ تعریف عامل‌ها و نمونه را بررسی کنید.'},pricing_formula_summary:{en:'Interpretation and model risk',fa:'تفسیر و ریسک مدل'},pricing_formula_note:{en:'CAPM is a one-factor equilibrium model. APT is a linear factor model; factor selection and premia are not uniquely determined by this calculator. These expected returns are assumptions, not guaranteed outcomes. Do not treat CAPM and APT estimates as interchangeable without checking horizon, currency, factor construction, and estimation method.',fa:'CAPM مدل تعادلی تک‌عاملی است. APT مدل خطی چندعاملی است؛ انتخاب عامل و صرف ریسک در این محاسبه‌گر یکتا تعیین نمی‌شود. بازده‌ها فرض‌اند و تضمین‌شده نیستند. بدون تطبیق افق، ارز، ساخت عامل‌ها و روش برآورد، خروجی CAPM و APT را قابل‌جایگزینی ندانید.'},pricing_ready:{en:'Inputs are valid; estimates use the assumptions above.',fa:'ورودی‌ها معتبرند؛ برآوردها بر اساس مفروضات بالا محاسبه شده‌اند.'},pricing_invalid:{en:'Enter valid numeric values for the risk-free rate, market return, market beta, and all factor betas and premiums.',fa:'برای نرخ بدون ریسک، بازده بازار، بتای بازار و همه بتاها و صرف ریسک عامل‌ها مقادیر عددی معتبر وارد کنید.'},
+    formula_kicker:{en:'QUICK REFERENCE',fa:'مرجع سریع'},formula_title:{en:'Advanced Financial Formula Library',fa:'کتابخانه فرمول‌های پیشرفته مالی'},formula_description:{en:'Review the structure, inputs, and interpretation limits of common CFA-style models. Expand a card for the formula and analytical checks.',fa:'ساختار، ورودی‌ها و محدودیت تفسیر مدل‌های متداول مالی را مرور کنید. برای دیدن فرمول و کنترل‌های تحلیلی، هر کارت را باز کنید.'},formula_wacc_name:{en:'Weighted average cost of capital',fa:'هزینه متوسط موزون سرمایه'},formula_wacc_note:{en:'Use market-value weights and marginal after-tax debt cost; match nominal/real basis and currency to FCFF.',fa:'از وزن‌های ارزش بازار و هزینه نهایی بدهی پس از مالیات استفاده کنید؛ مبنای اسمی/واقعی و ارز باید با FCFF سازگار باشد.'},formula_fcff_name:{en:'Free cash flow to the firm',fa:'جریان نقد آزاد بنگاه'},formula_fcff_note:{en:'Discount FCFF at WACC to estimate enterprise value; subtract net debt and other claims for equity value.',fa:'برای برآورد ارزش بنگاه FCFF را با WACC تنزیل کنید؛ برای ارزش سهام، بدهی خالص و سایر مطالبات را کسر کنید.'},formula_eva_name:{en:'Economic value added',fa:'ارزش افزوده اقتصادی'},formula_eva_note:{en:'Consistent operating scope, tax treatment, and invested-capital definition are essential.',fa:'سازگاری دامنه عملیاتی، نحوه مالیات و تعریف سرمایه به‌کارگرفته‌شده ضروری است.'},formula_dupont_name:{en:'Three-factor decomposition',fa:'تجزیه سه‌عاملی'},formula_dupont_note:{en:'Separate profitability, operating efficiency, and leverage to explain changes in ROE.',fa:'برای توضیح تغییر ROE، سودآوری، کارایی عملیاتی و اهرم را جداگانه بررسی کنید.'},formula_gordon_name:{en:'Dividend discount model',fa:'مدل تنزیل سود تقسیمی'},formula_gordon_note:{en:'Requires r > g and sustainable constant growth; value becomes highly sensitive as r approaches g.',fa:'به r بزرگ‌تر از g و رشد ثابت پایدار نیاز دارد؛ با نزدیک‌شدن r به g ارزش بسیار حساس می‌شود.'},formula_ccc_name:{en:'Cash conversion cycle',fa:'چرخه تبدیل وجه نقد'},formula_ccc_note:{en:'Use average receivables, inventory, and payables with aligned sales/COGS periods; seasonality can distort point estimates.',fa:'از میانگین دریافتنی، موجودی و پرداختنی با دوره فروش/COGS هم‌تراز استفاده کنید؛ فصل‌پذیری برآورد مقطعی را منحرف می‌کند.'},formula_duration_name:{en:'Modified duration and convexity',fa:'دیرش اصلاح‌شده و محدبیت'},formula_duration_note:{en:'Local approximation for small parallel yield changes; embedded options and curve shifts require more advanced treatment.',fa:'تقریب موضعی برای تغییرات کوچک و موازی بازده است؛ اختیارهای ضمنی و تغییر شکل منحنی به روش پیشرفته‌تری نیاز دارند.'},formula_sharpe_name:{en:'Excess return per unit of total risk',fa:'بازده مازاد به‌ازای ریسک کل'},formula_sharpe_note:{en:'Returns and risk-free rate must share a frequency; standard deviation treats upside and downside volatility symmetrically.',fa:'تناوب بازده و نرخ بدون ریسک باید یکسان باشد؛ انحراف معیار نوسان صعودی و نزولی را متقارن در نظر می‌گیرد.'}
+});
+
+Object.assign(faTexts, { results_title:'خلاصه ریسک و بازده', regression_results_title:'رگرسیون بازار و CAPM', add_market_data_hint_short:'تاریخ و ترتیب را با بازده دارایی یکسان کنید؛ تعداد مشاهدات باید برابر باشد.', add_benchmark_data_hint_short:'تاریخ و ترتیب را با بازده دارایی یکسان کنید؛ تعداد مشاهدات باید برابر باشد.', dcf_caveat:'FCFF = NOPAT + استهلاک − CapEx − تغییر سرمایه در گردش عملیاتی. سرمایه در گردش به‌صورت سهمی از فروش پیش‌بینی می‌شود؛ مبنای اولیه، در صورت وجود، میانگین دریافتنی تجاری + موجودی − پرداختنی تجاری است و وجه نقد و اقلام تأمین مالی را کنار می‌گذارد. فصل‌پذیری، اجاره، مالیات و تمرکز ارزش پایانی را بررسی کنید.' });
+Object.assign(texts,{dcf_wacc_derived:{en:'CAPM cost of equity {coe}% · common-equity weight {equityWeight}% · debt weight {debtWeight}% · preferred-equity weight {preferredWeight}% · derived WACC {wacc}%.',fa:'هزینه حقوق صاحبان سهام CAPM برابر {coe}٪ · وزن حقوق صاحبان سهام عادی {equityWeight}٪ · وزن بدهی {debtWeight}٪ · وزن سهام ممتاز {preferredWeight}٪ · WACC برآوردی {wacc}٪.'}});
+Object.assign(faTexts,{dcf_wacc_derived:'هزینه حقوق صاحبان سهام CAPM برابر {coe}٪ · وزن حقوق صاحبان سهام عادی {equityWeight}٪ · وزن بدهی {debtWeight}٪ · وزن سهام ممتاز {preferredWeight}٪ · WACC برآوردی {wacc}٪.'});
+Object.assign(texts, { skip_to_workspace:{en:'Skip to workspace',fa:'رفتن به فضای کاری'},dcf_claims_deducted:{en:'Claims deducted',fa:'مطالبات کسرشده'},dcf_claims_title:{en:'Other claims in the enterprise-to-equity bridge',fa:'سایر مطالبات در تبدیل EV به ارزش سهام'},dcf_preferred_claim:{en:'Preferred equity value',fa:'ارزش سهام ممتاز'},dcf_preferred_cost:{en:'Preferred cost (%)',fa:'هزینه سهام ممتاز (٪)'},dcf_minority_claim:{en:'Non-controlling interest',fa:'منافع فاقد کنترل'},dcf_other_claim:{en:'Other senior claims',fa:'سایر مطالبات مقدم'},dcf_claims_note:{en:'Use the same currency and scale as the statements. These claims are deducted from enterprise value; preferred equity is included in derived WACC only when its value and cost are supplied.',fa:'از ارز و مقیاس یکسان با صورت‌ها استفاده کنید. این مطالبات از ارزش بنگاه کسر می‌شوند؛ سهام ممتاز فقط وقتی با ارزش و هزینه آن وارد شود در WACC برآوردی لحاظ می‌شود.'},correlation_matrix_invalid:{en:'The pairwise correlations do not form a valid positive-semidefinite correlation matrix. Review all pair inputs.',fa:'همبستگی‌های دوتایی یک ماتریس همبستگی مثبت نیمه‌معین معتبر نمی‌سازند؛ همه ورودی‌های جفتی را بازبینی کنید.'},formula_fcfe_name:{en:'Free cash flow to equity',fa:'جریان نقد آزاد سهام‌داران'},formula_fcfe_note:{en:'Discount at cost of equity. Net borrowing and reinvestment assumptions must match the forecast capital structure.',fa:'با هزینه حقوق صاحبان سهام تنزیل کنید. استقراض خالص و سرمایه‌گذاری مجدد باید با ساختار سرمایه پیش‌بینی‌شده سازگار باشند.'},formula_residual_name:{en:'Equity value from book value and excess returns',fa:'ارزش سهام بر پایه ارزش دفتری و بازده مازاد'},formula_residual_note:{en:'Useful when dividends or free cash flows are difficult to forecast; book value and clean-surplus assumptions matter.',fa:'وقتی پیش‌بینی سود تقسیمی یا جریان نقد دشوار است کاربرد دارد؛ فرض ارزش دفتری و رابطه سود انباشته اهمیت دارند.'},formula_factor_name:{en:'Market, size, and value factor model',fa:'مدل عامل بازار، اندازه و ارزش'},formula_factor_note:{en:'Factor returns must be aligned in time and currency; exposures are estimated, not prescribed by this formula.',fa:'بازده عامل‌ها باید از نظر زمان و ارز هم‌تراز باشند؛ مواجهه‌ها برآورد می‌شوند و در این فرمول از پیش تعیین نشده‌اند.'} });
+
+Object.assign(texts, {
+  models_nav_capital:{en:'Capital budgeting',fa:'بودجه‌بندی سرمایه'},models_nav_wacc:{en:'Cost of capital',fa:'هزینه سرمایه'},models_nav_options:{en:'Options & Greeks',fa:'اختیار معامله و یونانی‌ها'},
+  capital_invalid:{en:'Enter at least two finite cash flows, including one inflow and one outflow. Rates must be greater than −100%.',fa:'حداقل دو جریان نقد محدود شامل یک ورودی و یک خروجی وارد کنید. نرخ‌ها باید بیشتر از ۱۰۰−٪ باشند.'},capital_no_irr:{en:'No root found',fa:'ریشه‌ای یافت نشد'},capital_no_irr_hint:{en:'No IRR was bracketed in the searched range; NPV remains the primary decision metric.',fa:'در دامنه جست‌وجو ریشه‌ای برای IRR پیدا نشد؛ NPV معیار اصلی تصمیم باقی می‌ماند.'},capital_multiple_irr:{en:'{count} IRR solutions found. Non-conventional cash flows can make IRR ambiguous; use NPV and review every root.',fa:'{count} جواب IRR پیدا شد. جریان نقد نامتعارف ممکن است IRR را مبهم کند؛ NPV و همه ریشه‌ها را بررسی کنید.'},capital_calculated:{en:'Metrics calculated from equally spaced cash flows. Compare projects only on a consistent horizon and risk basis.',fa:'شاخص‌ها از جریان‌های نقد با فاصله زمانی برابر محاسبه شدند. پروژه‌ها را فقط با افق و مبنای ریسک سازگار مقایسه کنید.'},capital_t:{en:'Period',fa:'دوره'},capital_flow:{en:'Cash flow',fa:'جریان نقد'},capital_cumulative:{en:'Cumulative cash flow',fa:'جریان نقد انباشته'},capital_cumulative_pv:{en:'Cumulative discounted cash flow',fa:'جریان نقد تنزیل‌شده انباشته'},capital_not_recovered:{en:'Not recovered',fa:'بازیافت‌نشده'},capital_period_1:{en:'years',fa:'سال'},capital_period_4:{en:'quarters',fa:'فصل'},capital_period_12:{en:'months',fa:'ماه'},
+  wacc_invalid:{en:'Capital values must be nonnegative, total capital must be positive, and tax must be between 0% and 100%.',fa:'ارزش اجزای سرمایه باید نامنفی، کل سرمایه مثبت و نرخ مالیات بین صفر تا ۱۰۰٪ باشد.'},wacc_calculated:{en:'WACC uses market-value weights and the after-tax cost of debt. Match currency, inflation basis, and cash-flow definition.',fa:'WACC از وزن‌های ارزش بازار و هزینه بدهی پس از مالیات استفاده می‌کند. ارز، مبنای تورم و تعریف جریان نقد را هم‌تراز کنید.'},
+  options_invalid:{en:'Enter positive spot, strike, maturity, and volatility; all rate inputs must be finite.',fa:'قیمت دارایی، قیمت اعمال، سررسید و نوسان مثبت و نرخ‌ها محدود باشند.'},options_calculated:{en:'Black–Scholes–Merton values and Greeks calculated under the assumptions below.',fa:'ارزش اختیار و یونانی‌ها با مدل بلک–شولز–مرتون و مفروضات زیر محاسبه شد.'},option_intrinsic_call:{en:'Call intrinsic value at expiry',fa:'ارزش ذاتی خرید در سررسید'},option_intrinsic_put:{en:'Put intrinsic value at expiry',fa:'ارزش ذاتی فروش در سررسید'},option_value:{en:'Option value',fa:'ارزش اختیار'}
+});
+Object.assign(texts,{
+ model_local_badge:{en:'Calculated locally',fa:'محاسبه محلی'},capital_kicker:{en:'INVESTMENT DECISIONS',fa:'تصمیم‌های سرمایه‌گذاری'},capital_title:{en:'Capital Budgeting & Project Returns',fa:'بودجه‌بندی سرمایه و بازده پروژه'},capital_description:{en:'Enter time 0 first, then one cash flow per equal period. NPV, IRR, MIRR, profitability index and payback metrics share this timeline.',fa:'ابتدا جریان نقد زمان صفر و سپس یک مقدار برای هر دوره هم‌فاصله وارد کنید. NPV، IRR، MIRR، شاخص سودآوری و دوره بازگشت بر همین مبنا محاسبه می‌شوند.'},capital_cashflows_label:{en:'Cash flows (t₀ first; one per line)',fa:'جریان‌های نقد (ابتدا t₀؛ هر مقدار در یک خط)'},capital_discount_label:{en:'Discount / finance rate (% annual)',fa:'نرخ تنزیل / تأمین مالی (سالانه ٪)'},capital_reinvest_label:{en:'MIRR reinvestment rate (% annual)',fa:'نرخ سرمایه‌گذاری مجدد MIRR (سالانه ٪)'},capital_period_label:{en:'Cash-flow interval',fa:'تناوب جریان نقد'},capital_annual:{en:'Annual',fa:'سالانه'},capital_quarterly:{en:'Quarterly',fa:'فصلی'},capital_monthly:{en:'Monthly',fa:'ماهانه'},capital_reset:{en:'Reset example',fa:'بازنشانی مثال'},capital_npv:{en:'Net present value (NPV)',fa:'ارزش فعلی خالص (NPV)'},capital_irr:{en:'Internal rate of return (IRR)',fa:'نرخ بازده داخلی (IRR)'},capital_mirr:{en:'Modified IRR (MIRR)',fa:'نرخ بازده داخلی تعدیل‌شده (MIRR)'},capital_pi:{en:'Profitability index (PI)',fa:'شاخص سودآوری (PI)'},capital_payback:{en:'Payback period',fa:'دوره بازگشت سرمایه'},capital_discounted_payback:{en:'Discounted payback',fa:'دوره بازگشت تنزیل‌شده'},capital_eaa:{en:'Equivalent annual annuity (EAA)',fa:'سالانه معادل (EAA)'},capital_waiting:{en:'Enter at least one inflow and one outflow.',fa:'حداقل یک جریان ورودی و یک جریان خروجی وارد کنید.'},capital_method_summary:{en:'Method & interpretation',fa:'روش و تفسیر'},capital_method_note:{en:'IRR may have multiple or no real solutions for non-conventional cash flows. MIRR separates finance and reinvestment rates. Payback assumes linear recovery within a period; taxes, fees, and mid-period timing are excluded.',fa:'برای جریان نقد نامتعارف ممکن است IRR چندجوابی یا بدون ریشه باشد. MIRR نرخ تأمین مالی و سرمایه‌گذاری مجدد را جدا می‌کند. دوره بازگشت، بازیافت خطی درون هر دوره را فرض می‌کند؛ مالیات، کارمزد و زمان‌بندی میان‌دوره‌ای لحاظ نشده‌اند.'},
+ wacc_kicker:{en:'CAPITAL STRUCTURE',fa:'ساختار سرمایه'},wacc_title:{en:'Weighted Average Cost of Capital',fa:'میانگین موزون هزینه سرمایه'},wacc_description:{en:'Use market-value capital weights, marginal financing costs and a tax rate consistent with currency and nominal/real basis.',fa:'از وزن‌های ارزش بازار، هزینه نهایی تأمین مالی و نرخ مالیات سازگار با ارز و مبنای اسمی/واقعی استفاده کنید.'},wacc_equity_value:{en:'Market value of common equity',fa:'ارزش بازار حقوق صاحبان سهام عادی'},wacc_debt_value:{en:'Market value of debt',fa:'ارزش بازار بدهی'},wacc_preferred_value:{en:'Market value of preferred equity',fa:'ارزش بازار سهام ممتاز'},wacc_cost_equity:{en:'Cost of common equity (%)',fa:'هزینه حقوق صاحبان سهام عادی (٪)'},wacc_cost_debt:{en:'Pre-tax cost of debt (%)',fa:'هزینه بدهی پیش از مالیات (٪)'},wacc_cost_preferred:{en:'Cost of preferred equity (%)',fa:'هزینه سهام ممتاز (٪)'},wacc_tax:{en:'Marginal tax rate (%)',fa:'نرخ نهایی مالیات (٪)'},wacc_result:{en:'Weighted average cost of capital',fa:'میانگین موزون هزینه سرمایه'},wacc_equity_weight:{en:'Common equity weight',fa:'وزن حقوق صاحبان سهام عادی'},wacc_debt_weight:{en:'Debt weight',fa:'وزن بدهی'},wacc_preferred_weight:{en:'Preferred equity weight',fa:'وزن سهام ممتاز'},wacc_waiting:{en:'Enter positive total capital and valid financing costs.',fa:'کل سرمایه مثبت و هزینه‌های تأمین مالی معتبر وارد کنید.'},wacc_method_summary:{en:'Formula & analyst checks',fa:'فرمول و کنترل‌های تحلیل‌گر'},wacc_method_note:{en:'WACC = wE·rE + wD·rD·(1−T) + wP·rP. Weights use market values. Tax shields assume deductible interest; distress, issuance costs, and changing capital structure are excluded.',fa:'WACC = wE·rE + wD·rD·(1−T) + wP·rP. وزن‌ها بر اساس ارزش بازار هستند. سپر مالیاتی، قابلیت کسر بهره را فرض می‌کند؛ هزینه درماندگی، انتشار و تغییر ساختار سرمایه لحاظ نشده است.'},
+ options_kicker:{en:'DERIVATIVES & RISK',fa:'مشتقه و ریسک'},options_title:{en:'Black–Scholes–Merton & Greeks',fa:'بلک–شولز–مرتون و یونانی‌ها'},options_european_badge:{en:'European options',fa:'اختیار اروپایی'},options_description:{en:'Estimate European call and put values using continuous compounding and dividend yield. Review sensitivities to spot, volatility, time and rates.',fa:'ارزش اختیار خرید و فروش اروپایی را با ترکیب پیوسته و بازده نقدی محاسبه کنید و حساسیت به قیمت، نوسان، زمان و نرخ را ببینید.'},option_spot:{en:'Underlying spot price (S)',fa:'قیمت لحظه‌ای دارایی پایه (S)'},option_strike:{en:'Strike price (K)',fa:'قیمت اعمال (K)'},option_maturity:{en:'Time to expiration (years)',fa:'زمان تا سررسید (سال)'},option_rate:{en:'Continuously compounded risk-free rate (%)',fa:'نرخ بدون ریسک پیوسته (٪)'},option_dividend:{en:'Continuous dividend yield (%)',fa:'بازده نقدی پیوسته (٪)'},option_volatility:{en:'Annualized volatility (%)',fa:'نوسان سالانه (٪)'},option_call:{en:'European call value',fa:'ارزش اختیار خرید اروپایی'},option_put:{en:'European put value',fa:'ارزش اختیار فروش اروپایی'},option_call_delta:{en:'Call delta',fa:'دلتا اختیار خرید'},option_put_delta:{en:'Put delta',fa:'دلتا اختیار فروش'},option_gamma:{en:'Gamma',fa:'گاما'},option_vega:{en:'Vega (per 1% volatility)',fa:'وگا (به‌ازای ۱٪ نوسان)'},option_call_theta:{en:'Call theta (annual)',fa:'تتا خرید (سالانه)'},option_put_theta:{en:'Put theta (annual)',fa:'تتا فروش (سالانه)'},option_call_rho:{en:'Call rho (per 1% rate)',fa:'رو خرید (به‌ازای ۱٪ نرخ)'},option_put_rho:{en:'Put rho (per 1% rate)',fa:'رو فروش (به‌ازای ۱٪ نرخ)'},options_ready:{en:'Illustrative values assume constant volatility and rates.',fa:'مقادیر نمونه، نوسان و نرخ ثابت را فرض می‌کنند.'},options_method_summary:{en:'Model assumptions',fa:'مفروضات مدل'},options_method_note:{en:'European exercise, lognormal prices, constant volatility and rates, frictionless trading, continuous dividend yield, and no early exercise. American options, discrete dividends, skew, and stochastic volatility are not modeled.',fa:'اعمال اروپایی، قیمت لگ‌نرمال، نوسان و نرخ ثابت، بازار بدون اصطکاک و بازده نقدی پیوسته فرض شده و اعمال زودهنگام لحاظ نشده است. اختیار آمریکایی، سود نقدی گسسته، چولگی و نوسان تصادفی مدل نشده‌اند.'}
+});
 
 // --- DOM Element Selectors ---
 // Tab Navigation
@@ -909,7 +939,7 @@ function addDataPointsToList(rawInput, targetList, listNameKey, dataTypeTextKey)
         const valueStr = cleanedValue.replace(',', '.'); // Handle comma as decimal separator
         const value = parseLocalizedNumber(valueStr);
 
-        if (!isNaN(value) && isFinite(value)) {
+        if (!isNaN(value) && isFinite(value) && value > -100) {
             newlyAddedData.push(value);
             addedCount++;
         } else {
@@ -1190,6 +1220,23 @@ function clearBenchmarkDataPoints() {
 }
 
 // --- File Import ---
+let spreadsheetLibraryPromise = null;
+function ensureSpreadsheetLibrary() {
+    if (window.XLSX) return Promise.resolve(window.XLSX);
+    if (spreadsheetLibraryPromise) return spreadsheetLibraryPromise;
+    spreadsheetLibraryPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = new URL('vendor/xlsx.full.min.js', document.baseURI).href;
+        script.onload = () => {
+            if (window.XLSX) resolve(window.XLSX);
+            else { spreadsheetLibraryPromise = null; reject(new Error('xlsx-unavailable')); }
+        };
+        script.onerror = () => { spreadsheetLibraryPromise = null; reject(new Error('xlsx-unavailable')); };
+        document.head.appendChild(script);
+    });
+    return spreadsheetLibraryPromise;
+}
+
 async function processImportedFile(file, targetList, listNameKey, dataTypeTextKey, displayUpdateFunction) {
     if (!file) {
         updateStatus('status_import_cancel', {}, 'warning');
@@ -1227,6 +1274,7 @@ async function processImportedFile(file, targetList, listNameKey, dataTypeTextKe
                     }
                 });
             } else { // CSV or Excel
+                await ensureSpreadsheetLibrary();
                 let workbook;
                 if (fileNameLower.endsWith('.csv')) {
                     const csvStr = new TextDecoder().decode(new Uint8Array(fileData));
@@ -1255,7 +1303,7 @@ async function processImportedFile(file, targetList, listNameKey, dataTypeTextKe
                                     const cleanedValue = jsonData[i][j].replace(/%/g, '').trim();
                                     if (cleanedValue !== '') val = parseLocalizedNumber(cleanedValue.replace(',', '.'));
                                 }
-                                if (val !== undefined && !isNaN(val) && isFinite(val)) {
+                                if (val !== undefined && !isNaN(val) && isFinite(val) && val > -100) {
                                     tempColData.push(val);
                                     numericCount++;
                                 }
@@ -1273,6 +1321,7 @@ async function processImportedFile(file, targetList, listNameKey, dataTypeTextKe
                 if (!numericColumnFound) throw new Error(_t('status_import_no_numeric', { dataType: _t(dataTypeTextKey) }));
             }
 
+            importedData = importedData.filter(value => Number.isFinite(value) && value > -100);
             if (importedData.length > 0) {
                 targetList.push(...importedData);
                 displayUpdateFunction();
@@ -1347,55 +1396,39 @@ function setupDragAndDrop(dropAreaElement, fileInputElement, targetList, listNam
 
 // --- Calculation Functions ---
 function calculateMean(data) { if (!data || data.length === 0) return NaN; const sum = data.reduce((acc, val) => acc + val, 0); return sum / data.length; }
+function calculateExtrema(data) { if (!data || data.length === 0) return { min: NaN, max: NaN }; return data.reduce((result, value) => ({ min: Math.min(result.min, value), max: Math.max(result.max, value) }), { min: Infinity, max: -Infinity }); }
 function calculateStdDev(data, isSample = true) { if (!data || data.length < (isSample ? 2 : 1)) return NaN; const mean = calculateMean(data); if (isNaN(mean)) return NaN; const variance = data.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (data.length - (isSample ? 1 : 0)); return Math.sqrt(variance); }
 function calculatePercentile(data, percentile) { if (!data || data.length === 0 || percentile < 0 || percentile > 100) return NaN; const sortedData = [...data].sort((a, b) => a - b); const n = sortedData.length; if (percentile === 0) return sortedData[0]; if (percentile === 100) return sortedData[n - 1]; const index = (percentile / 100) * (n - 1); const lowerIndex = Math.floor(index); const upperIndex = Math.ceil(index); const weight = index - lowerIndex; if (lowerIndex === upperIndex) return sortedData[lowerIndex]; else { const lowerValue = sortedData[lowerIndex] ?? sortedData[0]; const upperValue = sortedData[upperIndex] ?? sortedData[n-1]; return lowerValue * (1 - weight) + upperValue * weight; }}
-function calculateGeometricMean(data) { if (!data || data.length === 0) return NaN; let product = 1.0; for (const p of data) { const growthFactor = 1 + p / 100.0; if (growthFactor <= 1e-9) return NaN; product *= growthFactor; } if (product < 0 && data.length % 2 !== 0) return NaN; // Avoid complex numbers for odd N with negative product
-    return (Math.pow(product, 1.0 / data.length) - 1.0) * 100.0;
+function logGamma(value) {
+    const coefficients=[676.5203681218851,-1259.1392167224028,771.3234287776531,-176.6150291621406,12.507343278686905,-0.13857109526572012,9.984369578019572e-6,1.5056327351493116e-7];
+    if(value<0.5)return Math.log(Math.PI)-Math.log(Math.sin(Math.PI*value))-logGamma(1-value);
+    const z=value-1;let x=0.9999999999998099;
+    for(let i=0;i<coefficients.length;i++)x+=coefficients[i]/(z+i+1);
+    const t=z+7.5;
+    return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x);
 }
-function calculateDownsideDeviation(data, target = 0) { if (!data || data.length < 2) return NaN; const n = data.length; const downsideReturns = data.filter(r => r < target); if (downsideReturns.length === 0) return 0.0; const sumSqDev = downsideReturns.reduce((acc, r) => acc + Math.pow(r - target, 2), 0); return Math.sqrt(sumSqDev / (n - 1)); } // Using n-1 for sample
-function calculateMaxDrawdown(returnsPerc) {
-    if (!returnsPerc || returnsPerc.length === 0) return { maxDrawdown: 0.0, duration: 0, peakIndex: 0, troughIndex: 0 };
-    const dataArr = returnsPerc.filter(p => isFinite(p));
-    if (dataArr.length === 0) return { maxDrawdown: 0.0, duration: 0, peakIndex: 0, troughIndex: 0 };
-
-    let cumulative = [1.0];
-    dataArr.forEach(r => {
-        cumulative.push(cumulative[cumulative.length - 1] * (1 + r / 100.0));
-    });
-
-    let maxDd = 0.0;
-    let peakIndexOriginal = 0;
-    let troughIndexOriginal = 0;
-    let currentPeakValue = cumulative[0];
-    let currentPeakIndexCumulative = 0;
-
-    for (let i = 1; i < cumulative.length; i++) {
-        if (cumulative[i] > currentPeakValue) {
-            currentPeakValue = cumulative[i];
-            currentPeakIndexCumulative = i;
-        } else {
-            // Handle division by zero if currentPeakValue is 0
-            const currentDrawdown = (currentPeakValue === 0) ? -100.0 : (cumulative[i] / currentPeakValue - 1.0) * 100.0;
-            if (currentDrawdown < maxDd) {
-                maxDd = currentDrawdown;
-                peakIndexOriginal = currentPeakIndexCumulative;
-                troughIndexOriginal = i;
-            }
-        }
+function betaContinuedFraction(a,b,x) {
+    const maxIterations=200,epsilon=3e-14,tiny=1e-300;
+    const qab=a+b,qap=a+1,qam=a-1;let c=1,d=1-qab*x/qap;
+    if(Math.abs(d)<tiny)d=tiny;d=1/d;let h=d;
+    for(let m=1;m<=maxIterations;m++){
+        const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));
+        d=1+aa*d;if(Math.abs(d)<tiny)d=tiny;c=1+aa/c;if(Math.abs(c)<tiny)c=tiny;d=1/d;h*=d*c;
+        aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<tiny)d=tiny;c=1+aa/c;if(Math.abs(c)<tiny)c=tiny;d=1/d;const delta=d*c;h*=delta;
+        if(Math.abs(delta-1)<epsilon)break;
     }
-    // Duration is from peak to trough (inclusive of trough, exclusive of peak)
-    // troughIndexOriginal is the index in the cumulative array.
-    // If data points are 0-indexed, and cumulative has an initial 1.0 at index 0,
-    // then the actual data point index for trough is troughIndexOriginal - 1.
-    // The duration is simply the difference in indices in the cumulative array.
-    const duration = troughIndexOriginal - peakIndexOriginal;
-
-    return {
-        maxDrawdown: isFinite(maxDd) ? maxDd : 0.0,
-        duration: isFinite(duration) ? duration : 0,
-        peakIndex: peakIndexOriginal, // Index in cumulative array
-        troughIndex: troughIndexOriginal // Index in cumulative array
-    };
+    return h;
+}
+function regularizedIncompleteBeta(x,a,b) {
+    if(!(a>0&&b>0)||x<0||x>1)return NaN;
+    if(x===0)return 0;if(x===1)return 1;
+    const factor=Math.exp(logGamma(a+b)-logGamma(a)-logGamma(b)+a*Math.log(x)+b*Math.log1p(-x));
+    return x<(a+1)/(a+b+2)?factor*betaContinuedFraction(a,b,x)/a:1-factor*betaContinuedFraction(b,a,1-x)/b;
+}
+function twoSidedStudentTPValue(tStatistic,degreesOfFreedom) {
+    if(!Number.isFinite(tStatistic)||!Number.isInteger(degreesOfFreedom)||degreesOfFreedom<1)return NaN;
+    const x=degreesOfFreedom/(degreesOfFreedom+tStatistic*tStatistic);
+    return Math.max(0,Math.min(1,regularizedIncompleteBeta(x,degreesOfFreedom/2,0.5)));
 }
 
 function calculateRegression(assetReturns, marketReturns) {
@@ -1435,10 +1468,8 @@ function calculateRegression(assetReturns, marketReturns) {
         const stdErrAlpha = stdErrRegression * Math.sqrt((1/n) + (Math.pow(meanMarket, 2) / sumSqDevMarket));
         const tStatAlpha = alpha / stdErrAlpha;
 
-        // P-values require a t-distribution CDF. Simple-statistics doesn't provide this directly.
-        // For a more complete solution, a dedicated statistics library (e.g., jStat, numeric.js) would be needed.
-        // Keeping them as NaN for now, as per original code.
-        return { beta, alpha, rSquared, stdErrRegression, tStatBeta, pValBeta: NaN, tStatAlpha, pValAlpha: NaN };
+        const degreesOfFreedom=n-2;
+        return { beta, alpha, rSquared, stdErrRegression, tStatBeta, pValBeta: twoSidedStudentTPValue(tStatBeta,degreesOfFreedom), tStatAlpha, pValAlpha: twoSidedStudentTPValue(tStatAlpha,degreesOfFreedom) };
     } catch (e) {
         console.error("Error during regression calculation:", e);
         return { beta: NaN, alpha: NaN, rSquared: NaN, stdErrRegression: NaN, tStatBeta: NaN, pValBeta: NaN, tStatAlpha: NaN, pValAlpha: NaN };
@@ -1508,7 +1539,7 @@ function calculateBondPrice(faceValue, couponRate, yearsToMaturity, ytm, couponF
     // ytm: yield to maturity as percentage
     // couponFrequency: payments per year (1, 2, 4, 12)
 
-    if (faceValue <= 0 || couponRate < 0 || yearsToMaturity <= 0 || ytm < 0 || couponFrequency <= 0) {
+    if (faceValue <= 0 || couponRate < 0 || yearsToMaturity <= 0 || ytm <= -100 * couponFrequency || couponFrequency <= 0 || !Number.isInteger(yearsToMaturity * couponFrequency)) {
         return NaN;
     }
 
@@ -1534,14 +1565,16 @@ function calculateBondPrice(faceValue, couponRate, yearsToMaturity, ytm, couponF
 }
 
 function calculateYTM(faceValue, couponRate, yearsToMaturity, marketPrice, couponFrequency) {
-    // Iterative approach (Newton-Raphson or bisection)
-    // This is a simplified bisection method.
+    if (![faceValue,couponRate,yearsToMaturity,marketPrice,couponFrequency].every(Number.isFinite) || faceValue<=0 || couponRate<0 || yearsToMaturity<=0 || marketPrice<=0 || couponFrequency<=0 || !Number.isInteger(yearsToMaturity*couponFrequency)) return NaN;
     const maxIterations = 1000;
     const tolerance = 0.0001; // 0.01% difference in price
 
-    let lowYTM = 0.0001; // 0.01%
-    let highYTM = 1.0; // 100%
-    let currentYTM = 0.05; // 5% starting guess
+    let lowYTM = -couponFrequency + 1e-9;
+    let highYTM = 10;
+    const lowPrice=calculateBondPrice(faceValue,couponRate,yearsToMaturity,lowYTM*100,couponFrequency);
+    const highPrice=calculateBondPrice(faceValue,couponRate,yearsToMaturity,highYTM*100,couponFrequency);
+    if(!Number.isFinite(lowPrice)||!Number.isFinite(highPrice)||lowPrice<marketPrice||highPrice>marketPrice)return NaN;
+    let currentYTM = (lowYTM + highYTM) / 2;
 
     for (let i = 0; i < maxIterations; i++) {
         const priceAtCurrentYTM = calculateBondPrice(faceValue, couponRate, yearsToMaturity, currentYTM * 100, couponFrequency);
@@ -1566,7 +1599,7 @@ function calculateYTM(faceValue, couponRate, yearsToMaturity, marketPrice, coupo
 }
 
 function calculateMacaulayDuration(faceValue, couponRate, yearsToMaturity, ytm, couponFrequency) {
-    if (faceValue <= 0 || couponRate < 0 || yearsToMaturity <= 0 || ytm < 0 || couponFrequency <= 0) {
+    if (faceValue <= 0 || couponRate < 0 || yearsToMaturity <= 0 || ytm <= -100 * couponFrequency || couponFrequency <= 0 || !Number.isInteger(yearsToMaturity * couponFrequency)) {
         return NaN;
     }
 
@@ -1591,13 +1624,13 @@ function calculateMacaulayDuration(faceValue, couponRate, yearsToMaturity, ytm, 
 }
 
 function calculateModifiedDuration(macaulayDuration, ytm, couponFrequency) {
-    if (isNaN(macaulayDuration) || ytm < 0 || couponFrequency <= 0) return NaN;
+    if (isNaN(macaulayDuration) || ytm <= -100 * couponFrequency || couponFrequency <= 0) return NaN;
     const ytm_dec = ytm / 100;
     return macaulayDuration / (1 + (ytm_dec / couponFrequency));
 }
 
 function calculateConvexity(faceValue, couponRate, yearsToMaturity, ytm, couponFrequency) {
-    if (faceValue <= 0 || couponRate < 0 || yearsToMaturity <= 0 || ytm < 0 || couponFrequency <= 0) {
+    if (faceValue <= 0 || couponRate < 0 || yearsToMaturity <= 0 || ytm <= -100 * couponFrequency || couponFrequency <= 0 || !Number.isInteger(yearsToMaturity * couponFrequency)) {
         return NaN;
     }
 
@@ -1778,7 +1811,7 @@ function calculateMetrics() {
     const rfRate = parseLocalizedNumber(rfRateInput.value);
     const expectedMarketReturn = parseLocalizedNumber(expectedMarketReturnInput.value);
 
-    if (isNaN(rfRate)) {
+    if (isNaN(rfRate) || rfRate <= -100) {
         Swal.fire(_t('error_title'), _t('status_rf_error'), 'error');
         updateStatus('status_rf_error', {}, 'error');
         resetResultsDisplay();
@@ -1793,11 +1826,24 @@ function calculateMetrics() {
         return;
     }
 
+    const frequency = Number(document.getElementById('return-frequency')?.value);
+    if (!Number.isFinite(frequency) || frequency <= 0) {
+        Swal.fire(_t('warning_title'), _t('return_frequency_required'), 'warning');
+        updateStatus('return_frequency_required', {}, 'warning');
+        resetResultsDisplay();
+        updateActionButtonsState();
+        return;
+    }
+
     const n = dataPoints.length;
-    const mean = calculateMean(dataPoints);
-    const stdDev = calculateStdDev(dataPoints);
-    const geoMean = calculateGeometricMean(dataPoints);
-    const downsideDev = calculateDownsideDeviation(dataPoints);
+    const periodsPerYear = frequency;
+    const periodScale = Math.sqrt(periodsPerYear);
+    const periodicRf = (Math.pow(1 + rfRate / 100, 1 / periodsPerYear) - 1) * 100;
+    const mean = calculateMean(dataPoints) * periodsPerYear;
+    const stdDev = calculateStdDev(dataPoints) * periodScale;
+    const geoMeanPeriod = calculateGeometricMean(dataPoints);
+    const geoMean = Number.isFinite(geoMeanPeriod) && geoMeanPeriod > -100 ? (Math.pow(1 + geoMeanPeriod / 100, periodsPerYear) - 1) * 100 : NaN;
+    const downsideDev = calculateDownsideDeviation(dataPoints) * periodScale;
     const variance = Math.pow(stdDev, 2);
     const cv = mean === 0 ? NaN : stdDev / Math.abs(mean);
     const mddResult = calculateMaxDrawdown(dataPoints);
@@ -1806,12 +1852,12 @@ function calculateMetrics() {
     const var5 = calculatePercentile(dataPoints, 5);
     const var95 = calculatePercentile(dataPoints, 95);
     const cvar5 = calculateCVaR(dataPoints, 5);
-    const maxGain = Math.max(...dataPoints);
+    const maxGain = calculateExtrema(dataPoints).max;
 
     // Regression Analysis (CAPM)
     let regressionParams = { beta: NaN, alpha: NaN, rSquared: NaN, stdErrRegression: NaN, tStatBeta: NaN, pValBeta: NaN, tStatAlpha: NaN, pValAlpha: NaN };
     if (marketDataPoints.length === dataPoints.length && dataPoints.length >= 2) {
-        regressionParams = calculateRegression(dataPoints, marketDataPoints);
+        regressionParams = calculateRegression(dataPoints.map(value => value * periodsPerYear), marketDataPoints.map(value => value * periodsPerYear));
     }
     const capmExpectedReturn = calculateCAPMExpectedReturn(rfRate, regressionParams.beta, expectedMarketReturn);
 
@@ -1819,20 +1865,20 @@ function calculateMetrics() {
     let trackingError = NaN;
     let informationRatio = NaN;
     if (benchmarkDataPoints.length === dataPoints.length && dataPoints.length >= 2) {
-        trackingError = calculateTrackingError(dataPoints, benchmarkDataPoints);
-        informationRatio = calculateInformationRatio(dataPoints, benchmarkDataPoints);
+        trackingError = calculateTrackingError(dataPoints, benchmarkDataPoints) * periodScale;
+        informationRatio = calculateInformationRatio(dataPoints, benchmarkDataPoints) * periodScale;
     }
 
     // CFA Metrics
-    const sharpeRatio = calculateSharpeRatio(dataPoints, rfRate);
-    const sortinoRatio = calculateSortinoRatio(dataPoints, rfRate);
-    const omegaRatio = calculateOmegaRatio(dataPoints, rfRate); // Using RF as threshold for Omega
+    const sharpeRatio = calculateSharpeRatio(dataPoints, periodicRf) * periodScale;
+    const sortinoRatio = calculateSortinoRatio(dataPoints, periodicRf, periodicRf) * periodScale;
+    const omegaRatio = calculateOmegaRatio(dataPoints, periodicRf);
 
     const treynorRatio = calculateTreynorRatio(mean, rfRate, regressionParams.beta);
-    const calmarRatio = calculateCalmarRatio(mean, mddResult.maxDrawdown);
+    const calmarRatio = calculateCalmarRatio(geoMean, mddResult.maxDrawdown);
     const jensenAlpha = calculateJensenAlpha(mean, rfRate, expectedMarketReturn, regressionParams.beta);
-    const m2Measure = calculateM2Measure(mean, stdDev, calculateStdDev(marketDataPoints), rfRate); // Assuming marketDataPoints stdDev is market risk
-    const alphaTStat = calculateAlphaTStat(jensenAlpha, trackingError, n); // Using tracking error for alpha t-stat
+    const m2Measure = calculateM2Measure(mean, stdDev, calculateStdDev(marketDataPoints) * periodScale, rfRate);
+    const alphaTStat = regressionParams.tStatAlpha;
 
     calculatedResults = {
         n: n,
@@ -1930,7 +1976,7 @@ function calculateFixedIncome() {
     const ytmInput = parseLocalizedNumber(ytmInputBond.value);
     const couponFrequency = parseInt(couponFrequencySelect.value);
 
-    if (isNaN(faceValue) || isNaN(couponRate) || isNaN(yearsToMaturity) || isNaN(marketPrice) || isNaN(ytmInput) || isNaN(couponFrequency)) {
+    if (isNaN(faceValue) || isNaN(couponRate) || isNaN(yearsToMaturity) || isNaN(marketPrice) || isNaN(ytmInput) || isNaN(couponFrequency) || faceValue<=0 || couponRate<0 || yearsToMaturity<=0 || marketPrice<=0 || ytmInput<=-100*couponFrequency || couponFrequency<=0 || !Number.isInteger(yearsToMaturity*couponFrequency)) {
         Swal.fire(_t('error_title'), _t('bond_input_error'), 'error');
         updateStatus('status_calc_error', { error: _t('bond_input_error') }, 'error');
         resetFixedIncomeResultsDisplay();
@@ -1956,6 +2002,19 @@ function calculateFixedIncome() {
 }
 
 // --- Portfolio Management Orchestration ---
+function isPortfolioCorrelationMatrixValid(assets) {
+    const size=assets.length,tolerance=1e-10,L=Array.from({length:size},()=>Array(size).fill(0));
+    for(let i=0;i<size;i++)for(let j=0;j<=i;j++){
+        const correlation=i===j?1:assets[i].correlations[assets[j].id];
+        if(!Number.isFinite(correlation)||correlation < -1||correlation > 1)return false;
+        let residual=correlation;
+        for(let k=0;k<j;k++)residual-=L[i][k]*L[j][k];
+        if(i===j){if(residual < -tolerance)return false;L[i][j]=Math.sqrt(Math.max(0,residual));}
+        else if(L[j][j]>tolerance)L[i][j]=residual/L[j][j];
+        else if(Math.abs(residual)>tolerance)return false;
+    }
+    return true;
+}
 function calculatePortfolioManagement() {
     updateStatus('status_calculating', { dataType: _t('portfolio_management_title') }, 'info');
     portfolioCalculatedResults = {};
@@ -1976,7 +2035,7 @@ function calculatePortfolioManagement() {
         const std = parseLocalizedNumber(asset.stdDev);
         const w = parseLocalizedNumber(asset.weight);
 
-        if (isNaN(r) || isNaN(std) || isNaN(w) || w < 0) {
+        if (isNaN(r) || isNaN(std) || isNaN(w) || std < 0 || w < 0) {
             Swal.fire(_t('error_title'), _t('portfolio_input_error'), 'error');
             updateStatus('status_calc_error', { error: _t('portfolio_input_error') }, 'error');
             hasError = true;
@@ -1993,7 +2052,15 @@ function calculatePortfolioManagement() {
 
     if (Math.abs(totalWeight - 100) > 0.01) { // Allow for minor floating point inaccuracies
         Swal.fire(_t('warning_title'), _t('portfolio_weights_error'), 'warning');
-        // Do not return, proceed with calculation but highlight potential issue
+        updateStatus('portfolio_weights_error', {}, 'warning');
+        resetPortfolioResultsDisplay();
+        return;
+    }
+    if(!isPortfolioCorrelationMatrixValid(validAssets)){
+        Swal.fire(_t('error_title'),_t('correlation_matrix_invalid'),'error');
+        updateStatus('correlation_matrix_invalid',{},'error');
+        resetPortfolioResultsDisplay();
+        return;
     }
 
     // Calculate Expected Portfolio Return
@@ -2095,7 +2162,7 @@ function updateResultsUI(results) {
     updateSpan('result-omega', results.omegaRatio);
 
     
-    updateSpan('result-treynor', results.treynorRatio);
+    updateSpan('result-treynor', results.treynorRatio, { addPercent: true });
     updateSpan('result-calmar', results.calmarRatio);
     updateSpan('result-jensen-alpha', results.jensenAlpha, { addPercent: true });
     updateSpan('result-m2', results.m2Measure, { addPercent: true });
@@ -2396,7 +2463,7 @@ function plotHistogramLogic(data) { /* ... from previous script, ensure it uses 
     const plotData = [traceHist]; const shapes = [];
 
     if (n > 1 && !isNaN(mean) && !isNaN(std) && std > 1e-9) {
-        const xMin = Math.min(...data); const xMax = Math.max(...data); const range = xMax - xMin;
+        const { min: xMin, max: xMax } = calculateExtrema(data); const range = xMax - xMin;
         const xNorm = []; const yNormPDF = []; const step = range / 200 || 0.05;
         let curveStartX = Math.min(xMin, mean - 3.5 * std); let curveEndX = Math.max(xMax, mean + 3.5 * std);
         if (range === 0) { curveStartX = mean - 1; curveEndX = mean + 1; }
@@ -2429,7 +2496,7 @@ function plotBoxplotLogic(data) { /* ... from previous script, ensure it uses re
     const mean = calculateMean(data); const std = calculateStdDev(data);
     const q1 = calculatePercentile(data,25); const median = calculatePercentile(data,50); const q3 = calculatePercentile(data,75);
     const iqr = q3-q1; const upperFence = q3 + 1.5 * iqr; const lowerFence = q1 - 1.5 * iqr;
-    const dataMax = Math.max(...data); const dataMin = Math.min(...data);
+    const { min: dataMin, max: dataMax } = calculateExtrema(data);
     const effectiveMax = Math.min(dataMax, upperFence); const effectiveMin = Math.max(dataMin, lowerFence);
 
     const traceBox = { y: data, type: 'box', name: ' ', boxpoints: 'all', jitter: 0.3, pointpos: -1.8, marker: { color: PRIMARY_COLOR, size: responsiveParams.markerSize -1, opacity: 0.6, line: { color: DARK_BORDER_COLOR, width: 0.5 } }, line: { color: DARK_TEXT_COLOR, width: responsiveParams.lineWidth }, fillcolor: 'rgba(59, 130, 246, 0.3)', hoverinfo: 'y',
@@ -2483,7 +2550,7 @@ function plotRegressionLogic(assetReturns, marketReturns, regressionParams) { /*
     if (!regressionParams || typeof regressionParams.alpha !== 'number' || typeof regressionParams.beta !== 'number') { Swal.fire(_t('error_title'), _t('status_plot_error_no_regression_params'), 'error'); return null; }
     const { alpha, beta } = regressionParams; const responsiveParams = getResponsiveLayoutParams();
     const traceScatter = { x: marketReturns, y: assetReturns, mode: 'markers', type: 'scatter', name: _t('scatter_plot_legend_actual'), marker: { color: PRIMARY_COLOR, size: responsiveParams.markerSize, opacity: 0.7 } };
-    const minMarket = Math.min(...marketReturns); const maxMarket = Math.max(...marketReturns);
+    const { min: minMarket, max: maxMarket } = calculateExtrema(marketReturns);
     const lineX = [minMarket, maxMarket]; const lineY = [alpha + beta * minMarket, alpha + beta * maxMarket];
     const traceLine = { x: lineX, y: lineY, mode: 'lines', type: 'scatter', name: _t('scatter_plot_legend_regression_line', {alpha: formatNumber(alpha,2), beta: formatNumber(beta,3)}), line: { color: ACCENT_COLOR_NEG, width: responsiveParams.lineWidth } };
     const plotData = [traceScatter, traceLine];
@@ -2664,7 +2731,9 @@ function exportResultsToTxtFile() {
     updateStatus('status_saving_txt_success', { filename }, 'success');
 }
 
-function exportResultsToExcelFile() {
+async function exportResultsToExcelFile() {
+    try { await ensureSpreadsheetLibrary(); }
+    catch (_) { updateStatus('error_lib_missing', { lib: 'XLSX' }, 'error'); return; }
     updateStatus('status_saving_results', {}, 'info');
     const wb = XLSX.utils.book_new();
     const now = new Date();
@@ -2830,7 +2899,8 @@ const tooltipControlIds = {
     'face-value':'help_bond_face','coupon-rate':'help_bond_coupon','years-to-maturity':'help_bond_maturity','market-price-bond':'help_bond_price','ytm-input':'ytm_input_tooltip','coupon-frequency':'help_bond_frequency',
     'company-name':'help_company_name','company-ticker':'help_company_ticker','company-industry':'help_company_industry','company-currency':'help_company_currency','company-scale':'help_company_scale','company-period':'help_company_period','company-select':'help_company_select','company-period-select':'help_company_period_select','company-period-months':'help_company_months','company-reporting-basis':'help_company_scope','company-assurance-status':'help_company_assurance','company-audit-opinion':'help_company_opinion','company-source-document':'help_company_source','company-source-pdf':'help_company_source','company-source-page':'help_company_source','company-restated':'help_company_restated','compare-industry-select':'help_compare_universe','compare-period-select':'help_compare_period','compare-group-select':'help_compare_metric','compare-trend-metric':'help_compare_metric','financial-period-months':'help_fin_period','financial-flow-basis':'help_fin_basis','financial-chart-group':'help_chart_group','tradingview-symbol':'help_quote_symbol',
     'value-entry':'help_asset_return_series','market-value-entry':'help_market_series','benchmark-value-entry':'help_benchmark_series','add-button':'help_asset_return_series','financial-workbook-file':'help_section_workbook',
-    'dcf-nwc-sales':'help_dcf_nwc_sales','dcf-capex-sales':'help_dcf_capex_sales','dcf-da-sales':'help_dcf_da_sales','dcf-risk-free':'help_dcf_risk_free','dcf-beta':'help_dcf_beta','dcf-erp':'help_dcf_erp','dcf-cost-debt':'help_dcf_cost_debt','dcf-years':'help_dcf_horizon','dcf-tax':'help_dcf_tax','dcf-use-derived-wacc':'help_dcf_derived_wacc','edit-select':'help_asset_edit_select','edit-value-entry':'help_asset_edit_value','file-importer-input-asset':'help_asset_import'
+    'dcf-nwc-sales':'help_dcf_nwc_sales','dcf-capex-sales':'help_dcf_capex_sales','dcf-da-sales':'help_dcf_da_sales','dcf-risk-free':'help_dcf_risk_free','dcf-beta':'help_dcf_beta','dcf-erp':'help_dcf_erp','dcf-cost-debt':'help_dcf_cost_debt','dcf-years':'help_dcf_horizon','dcf-tax':'help_dcf_tax','dcf-use-derived-wacc':'help_dcf_derived_wacc','edit-select':'help_asset_edit_select','edit-value-entry':'help_asset_edit_value','file-importer-input-asset':'help_asset_import',
+    'tvm-target':'help_tvm_target','tvm-pv':'help_tvm_pv','tvm-pmt':'help_tvm_pmt','tvm-fv':'help_tvm_fv','tvm-rate':'help_tvm_rate','tvm-years':'help_tvm_years','tvm-frequency':'help_tvm_frequency','tvm-timing':'help_tvm_timing','pricing-rf':'help_pricing_rf','pricing-market-return':'help_pricing_market','pricing-market-beta':'help_pricing_beta','apt-premium-1':'help_apt_premium','apt-premium-2':'help_apt_premium','apt-premium-3':'help_apt_premium','apt-beta-1':'help_apt_beta','apt-beta-2':'help_apt_beta','apt-beta-3':'help_apt_beta'
 };
 
 Object.assign(detailedHelpTexts, {
@@ -2839,6 +2909,21 @@ Object.assign(detailedHelpTexts, {
     help_fin_accounts_payable_prior:{en:'Enter accounts payable at the beginning of the reporting period. DPO uses the average of opening and closing payables when both are available; align the balance with the COGS period.',fa:'حساب‌های پرداختنی ابتدای دوره گزارش را وارد کنید. در صورت وجود هر دو مانده، DPO از میانگین ابتدا و انتها استفاده می‌کند؛ مانده را با دوره بهای تمام‌شده هماهنگ کنید.'},
     help_fin_inventory_prior:{en:'Enter inventory at the beginning of the reporting period. DIO uses average inventory when both opening and closing balances are available; check valuation basis and seasonality.',fa:'موجودی ابتدای دوره گزارش را وارد کنید. در صورت وجود هر دو مانده، DIO از میانگین موجودی استفاده می‌کند؛ مبنای ارزش‌گذاری و فصل‌پذیری را بررسی کنید.'},
     help_fin_accounts_receivable_prior:{en:'Enter accounts receivable at the beginning of the reporting period. DSO uses average receivables when both opening and closing balances are available; align net sales and period length.',fa:'حساب‌های دریافتنی ابتدای دوره گزارش را وارد کنید. در صورت وجود هر دو مانده، DSO از میانگین دریافتنی‌ها استفاده می‌کند؛ فروش خالص و طول دوره را هماهنگ کنید.'},
+    help_tvm_target:{en:'Choose whether to solve for FV, PV, or the equal periodic contribution. The selected output field is disabled; all remaining required assumptions must be supplied.',fa:'تعیین کنید FV، PV یا واریز دوره‌ای برابر محاسبه شود. فیلد خروجی انتخاب‌شده غیرفعال می‌شود و سایر مفروضات لازم باید تکمیل شوند.'},
+    help_tvm_pv:{en:'Opening lump-sum investment at time zero. Positive values are treated as invested capital; positive PMT values are additional deposits made at each selected period.',fa:'سرمایه‌گذاری یکجای اولیه در زمان صفر. مقدار مثبت به‌عنوان سرمایه‌گذاری در نظر گرفته می‌شود و PMT مثبت واریزهای اضافی هر دوره است.'},
+    help_tvm_pmt:{en:'Equal additional deposit at the selected payment frequency. Payments are assumed to occur at the beginning or end of each period as selected below; withdrawals are not modeled as a separate cash-flow stream.',fa:'واریز اضافی برابر در تناوب انتخاب‌شده. پرداخت مطابق انتخاب پایین در ابتدا یا انتهای دوره انجام می‌شود؛ برداشت‌ها به‌صورت جریان نقدی مجزا مدل نشده‌اند.'},
+    help_tvm_fv:{en:'Target account value at the end of the horizon. In PV mode it is discounted back net of periodic deposits; in PMT mode it is the future target to reach.',fa:'ارزش هدف حساب در پایان افق. در حالت PV، پس از کسر واریزها به امروز تنزیل می‌شود؛ در حالت PMT هدف نهایی موردنیاز است.'},
+    help_tvm_rate:{en:'Nominal annual rate divided by compounding frequency to get the periodic rate. This assumes a constant rate and does not account for inflation, taxes, fees, or reinvestment uncertainty.',fa:'نرخ اسمی سالانه که بر تناوب ترکیب تقسیم می‌شود تا نرخ دوره‌ای به‌دست آید. نرخ ثابت فرض شده و تورم، مالیات، کارمزد یا عدم قطعیت سرمایه‌گذاری مجدد را لحاظ نمی‌کند.'},
+    help_tvm_years:{en:'Length of the investment horizon. The calculator multiplies years by the selected annual frequency to determine the number of periods.',fa:'مدت افق سرمایه‌گذاری. محاسبه‌گر سال‌ها را در تناوب سالانه انتخاب‌شده ضرب می‌کند تا تعداد دوره‌ها به‌دست آید.'},
+    help_tvm_frequency:{en:'Number of compounding and deposit periods per year. The calculator assumes deposits occur at this same frequency as interest compounding.',fa:'تعداد دوره‌های ترکیب سود و واریز در سال. فرض می‌شود واریزها و ترکیب سود تناوب یکسانی دارند.'},
+    help_tvm_timing:{en:'An ordinary annuity deposits at each period end. An annuity due deposits at each period beginning, giving each contribution one extra compounding period.',fa:'مستمری عادی در پایان هر دوره و مستمری پیش‌پرداخت در ابتدای آن واریز می‌شود؛ در حالت دوم هر واریز یک دوره بیشتر سود می‌گیرد.'},
+    help_pricing_model:{en:'Compare the CAPM single-factor estimate with a three-factor APT illustration. Results depend on chosen betas, premiums, currency, and horizon; this is not a statistical estimation of factor risk premia.',fa:'برآورد تک‌عاملی CAPM را با نمونه سه‌عاملی APT مقایسه کنید. نتایج به بتا، صرف ریسک، ارز و افق وابسته‌اند؛ این محاسبه‌گر صرف ریسک عوامل را آماری برآورد نمی‌کند.'},
+    help_pricing_rf:{en:'Risk-free return for the same currency and horizon as the modeled asset return. CAPM and APT both use it as the baseline return.',fa:'بازده بدون ریسک هم‌ارز با ارز و افق بازده دارایی. CAPM و APT هر دو آن را بازده مبنا می‌گیرند.'},
+    help_pricing_market:{en:'Expected market portfolio return for CAPM. The market risk premium is market return minus the risk-free rate; do not enter the premium in this field.',fa:'بازده موردانتظار پرتفوی بازار برای CAPM. صرف ریسک بازار برابر بازده بازار منهای نرخ بدون ریسک است؛ در این فیلد خود بازده بازار را وارد کنید.'},
+    help_pricing_beta:{en:'Sensitivity of the asset to market excess return in CAPM. A beta of one implies market-like systematic exposure; it does not capture all company-specific or tail risks.',fa:'حساسیت دارایی به بازده مازاد بازار در CAPM. بتای یک بیانگر مواجهه سیستماتیک مشابه بازار است و همه ریسک‌های خاص شرکت یا دنباله‌ای را نمی‌سنجد.'},
+    help_apt_premium:{en:'Expected premium for the named factor above the risk-free rate, entered in percentage points. Define the factor portfolio and estimation window consistently before using the estimate.',fa:'صرف موردانتظار عامل مشخص‌شده بالاتر از نرخ بدون ریسک که به واحد درصد وارد می‌شود. پیش از استفاده، پرتفوی عامل و پنجره برآورد را دقیق تعریف کنید.'},
+    help_apt_beta:{en:'Asset sensitivity to the corresponding APT factor return. Beta and factor premium must refer to the same factor definition, currency, and horizon.',fa:'حساسیت دارایی به بازده عامل متناظر APT. بتا و صرف ریسک باید به تعریف عامل، ارز و افق یکسان اشاره کنند.'},
+    help_formula_library:{en:'Reference identities summarize common valuation and performance models. Definitions can vary by accounting adjustments, sample frequency, and market convention; check the accompanying notes before comparison.',fa:'روابط مرجع، مدل‌های متداول ارزش‌گذاری و عملکرد را خلاصه می‌کنند. تعریف‌ها با تعدیلات حسابداری، تناوب نمونه و عرف بازار تغییر می‌کنند؛ پیش از مقایسه یادداشت‌ها را بررسی کنید.'},
     portfolio_remove_asset:{en:'Remove asset',fa:'حذف دارایی'}
 });
 
@@ -2860,13 +2945,14 @@ function tooltipKeyForControl(control) {
 }
 
 const tooltipSectionKeys = {
-    'asset-analysis-tab':'help_section_asset_analysis','equity-valuation-tab':'help_section_equity_valuation','fixed-income-tab':'help_section_fixed_income','portfolio-management-tab':'help_section_portfolio_management','financial-strategy-tab':'help_section_financial_strategy',
+    'asset-analysis-tab':'help_section_asset_analysis','equity-valuation-tab':'help_section_equity_valuation','fixed-income-tab':'help_section_fixed_income','portfolio-management-tab':'help_section_portfolio_management','financial-strategy-tab':'help_section_financial_strategy','financial-models-tab':'help_tab_financial_models',
+    'tvm-model':'help_tvm_target','asset-pricing-models':'help_pricing_model','advanced-formula-library':'help_formula_library',
     'asset-data-input-section':'help_section_asset_analysis','market-data-input-section':'help_section_asset_analysis','benchmark-data-input-section':'help_section_asset_analysis','company-comparison-workspace':'help_section_company_comparison',
     'analyst-dashboard':'help_section_analyst_dashboard','financial-quality-workspace':'help_section_quality','financial-workbook-workspace':'help_section_workbook','advanced-valuation-workspace':'help_section_dcf'
 };
 const tooltipHeadingKeys = {
     tab_asset_analysis:'help_section_asset_analysis',tab_equity_valuation:'help_section_equity_valuation',tab_fixed_income:'help_section_fixed_income',tab_portfolio_management:'help_section_portfolio_management',tab_financial_strategy:'help_section_financial_strategy',
-    financial_strategy_title:'help_section_financial_strategy',analyst_dashboard_title:'help_section_analyst_dashboard',peer_workspace_title:'help_section_company_comparison',advanced_valuation_title:'help_section_dcf',quality_title:'help_section_quality',workbook_title:'help_section_workbook',calculated_metrics_title:'help_section_financial_strategy',metric_chart_title:'help_chart_group',quote_widget_title:'help_section_financial_strategy'
+    financial_strategy_title:'help_section_financial_strategy',analyst_dashboard_title:'help_section_analyst_dashboard',peer_workspace_title:'help_section_company_comparison',advanced_valuation_title:'help_section_dcf',quality_title:'help_section_quality',workbook_title:'help_section_workbook',calculated_metrics_title:'help_section_financial_strategy',metric_chart_title:'help_chart_group',quote_widget_title:'help_section_financial_strategy',models_title:'help_tab_financial_models',tvm_title:'help_tvm_target',pricing_title:'help_pricing_model',formula_title:'help_formula_library'
 };
 
 function makeTooltipIcon(key, title = '') {
@@ -2913,7 +2999,7 @@ function decorateResearchTooltips(root = document) {
     });
 
     root.querySelectorAll('.tab-button[data-tab]').forEach(button => {
-        const key = ({'asset-analysis':'help_tab_asset','equity-valuation':'help_tab_equity','fixed-income':'help_tab_fixed_income','portfolio-management':'help_tab_portfolio','financial-strategy':'help_section_financial_strategy'})[button.dataset.tab];
+        const key = ({'asset-analysis':'help_tab_asset','equity-valuation':'help_tab_equity','fixed-income':'help_tab_fixed_income','portfolio-management':'help_tab_portfolio','financial-strategy':'help_section_financial_strategy','financial-models':'help_tab_financial_models'})[button.dataset.tab];
         if (key) { button.dataset.tooltipKey = key; button.title = _t(key); }
     });
     root.querySelectorAll('.analyst-kpi').forEach((card,index) => {
@@ -2964,6 +3050,21 @@ function backdropClickHandler(event) { if (event.target === plotModal) closeModa
 function escapeKeyHandler(event) { if (event.key === 'Escape') closeModal(); }
 
 // --- Tab Switching Logic ---
+function syncFundamentalSidebar(tabId) {
+    const menu = document.getElementById('fundamental-side-nav');
+    if (!menu) return;
+    const selectedTab = tabId || document.querySelector('.tab-button.active')?.dataset.tab;
+    const visible = selectedTab === 'financial-strategy' && window.matchMedia('(min-width: 901px)').matches;
+    menu.classList.toggle('is-visible', visible);
+    menu.open = visible;
+    if (visible) {
+        const current = [...menu.querySelectorAll('a')].find(link => link.getAttribute('href') === window.location.hash);
+        menu.querySelectorAll('a').forEach(link => {
+            link.classList.toggle('active', link === current);
+            if (link === current) link.setAttribute('aria-current','location'); else link.removeAttribute('aria-current');
+        });
+    }
+}
 function switchTab(tabId) {
     tabContents.forEach(content => {
         content.classList.remove('active');
@@ -2975,11 +3076,96 @@ function switchTab(tabId) {
 
     document.getElementById(`${tabId}-tab`).classList.add('active');
     const selectedTab=document.querySelector(`[data-tab="${tabId}"]`);selectedTab.classList.add('active');selectedTab.setAttribute('aria-current','page');
+    document.querySelector('.workspace-layout')?.classList.toggle('results-context-active',tabId==='asset-analysis');
+    syncFundamentalSidebar(tabId);
     if(tabId==='financial-strategy'){requestAnimationFrame(()=>{if(financialMetrics)drawFinancialChart();drawCompanyTrendChart();});}
+    if(selectedTab) selectedTab.scrollIntoView({block:'nearest',inline:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+}
+
+function calculateTimeValueModel() {
+    const result = document.getElementById('tvm-result-value');
+    const detail = document.getElementById('tvm-result-detail');
+    const target = document.getElementById('tvm-target')?.value || 'fv';
+    const read = id => { const input=document.getElementById(id); return input && input.value.trim()!=='' ? parseLocalizedNumber(input.value) : NaN; };
+    const frequency = Number(document.getElementById('tvm-frequency')?.value || 1);
+    const years = Number(document.getElementById('tvm-years')?.value);
+    const annualRate = read('tvm-rate') / 100;
+    const periodicRate = annualRate / frequency;
+    const periods = years * frequency;
+    const pv = read('tvm-pv'), payment = read('tvm-pmt'), fv = read('tvm-fv');
+    const due = document.getElementById('tvm-timing')?.value === 'beginning';
+    let answer = NaN, resultKey = '';
+    const validFrequency = Number.isInteger(frequency) && frequency > 0;
+    const annuityFactor = (rate,count) => Math.abs(rate) < 1e-12 ? count : ((1 + rate) ** count - 1) / rate;
+    const valueAt = (rate,count) => pv * (1 + rate) ** count + payment * annuityFactor(rate,count) * (due ? 1 + rate : 1);
+    if (validFrequency && target === 'n' && Number.isFinite(periodicRate) && periodicRate > -1 && [pv,payment,fv].every(Number.isFinite)) {
+        const residual = count => valueAt(periodicRate,count) - fv;
+        let low=0, high=1, lowValue=residual(low), highValue=residual(high);
+        while (Math.sign(lowValue) === Math.sign(highValue) && high < 36500 && Number.isFinite(highValue)) { high=Math.min(36500,high*2); highValue=residual(high); }
+        if (lowValue === 0) answer=0;
+        else if (Math.sign(lowValue) !== Math.sign(highValue)) {
+            for(let i=0;i<90;i++){const middle=(low+high)/2,middleValue=residual(middle);if(Math.abs(middleValue)<1e-10){low=high=middle;break;}if(Math.sign(middleValue)===Math.sign(lowValue)){low=middle;lowValue=middleValue;}else high=middle;}
+            answer=(low+high)/2;
+        }
+        resultKey='tvm_result_detail_n';
+    } else if (validFrequency && target === 'rate' && Number.isFinite(periods) && periods > 0 && periods <= 36500 && [pv,payment,fv].every(Number.isFinite)) {
+        const residual = rate => valueAt(rate,periods) - fv;
+        let low=-0.999999999, high=10, lowValue=residual(low), highValue=residual(high);
+        if (lowValue === 0) answer=low;
+        else if (highValue === 0) answer=high;
+        else if (Math.sign(lowValue) !== Math.sign(highValue)) {
+            for(let i=0;i<100;i++){const middle=(low+high)/2,middleValue=residual(middle);if(Math.abs(middleValue)<1e-10){low=high=middle;break;}if(Math.sign(middleValue)===Math.sign(lowValue)){low=middle;lowValue=middleValue;}else high=middle;}
+            answer=(low+high)/2;
+        }
+        answer *= frequency * 100;
+        resultKey='tvm_result_detail_rate';
+    } else if (Number.isFinite(years) && years > 0 && years <= 100 && validFrequency && Number.isFinite(periodicRate) && periodicRate > -1 && Number.isFinite(periods) && periods <= 36500) {
+        const growth=(1+periodicRate)**periods;
+        const fvAnnuity=annuityFactor(periodicRate,periods);
+        const pvAnnuity=Math.abs(periodicRate)<1e-12?periods:(1-1/growth)/periodicRate;
+        const timingFactor=due?1+periodicRate:1;
+        if(Number.isFinite(growth)&&Number.isFinite(fvAnnuity)&&Number.isFinite(pvAnnuity)) {
+            if (target === 'fv' && Number.isFinite(pv) && Number.isFinite(payment)) { answer = pv * growth + payment * fvAnnuity * timingFactor; resultKey = 'tvm_result_detail_fv'; }
+            if (target === 'pv' && Number.isFinite(fv) && Number.isFinite(payment) && growth > 0) { answer = fv / growth - payment * pvAnnuity * timingFactor; resultKey = 'tvm_result_detail_pv'; }
+            if (target === 'pmt' && Number.isFinite(pv) && Number.isFinite(fv) && Math.abs(fvAnnuity * timingFactor) > 1e-12) { answer = (fv - pv * growth) / (fvAnnuity * timingFactor); resultKey = 'tvm_result_detail_pmt'; }
+        }
+    }
+    const formatter = new Intl.NumberFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US', {maximumFractionDigits:2,minimumFractionDigits:0});
+    const outputValue=answer;
+    const suffix=target==='rate'?'%':target==='n'?_t('tvm_period_suffix'):'';
+    if (result) result.textContent = Number.isFinite(outputValue) ? `${formatter.format(outputValue)}${suffix ? ` ${suffix}` : ''}` : '—';
+    if (detail) detail.textContent = Number.isFinite(answer) ? _t(resultKey) : _t('tvm_invalid');
+    const outputId={fv:'tvm-fv',pv:'tvm-pv',pmt:'tvm-pmt',n:'tvm-years',rate:'tvm-rate'}[target];
+    const outputInput=outputId?document.getElementById(outputId):null;
+    ['tvm-pv','tvm-pmt','tvm-fv','tvm-rate','tvm-years'].forEach(id => { const input=document.getElementById(id); if(input) input.disabled = input === outputInput; });
+    return answer;
+}
+
+function calculateAssetPricingModels() {
+    const read = id => { const input=document.getElementById(id); return input && input.value.trim()!=='' ? parseLocalizedNumber(input.value) : NaN; };
+    const rf=read('pricing-rf'), market=read('pricing-market-return'), marketBeta=read('pricing-market-beta');
+    const premiums=[1,2,3].map(i=>read(`apt-premium-${i}`));
+    const betas=[1,2,3].map(i=>read(`apt-beta-${i}`));
+    const capm=rf+marketBeta*(market-rf);
+    const apt=rf+premiums.reduce((sum,premium,index)=>sum+betas[index]*premium,0);
+    const valid=[rf,market,marketBeta,...premiums,...betas].every(Number.isFinite);
+    const formatter = new Intl.NumberFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US', {maximumFractionDigits:2,minimumFractionDigits:2});
+    const put=(id,value)=>{const output=document.getElementById(id);if(output)output.textContent=valid&&Number.isFinite(value)?`${formatter.format(value)}%`:'—';};
+    put('capm-expected-result',capm); put('apt-expected-result',apt); put('pricing-spread-result',apt-capm);
+    const status=document.getElementById('pricing-model-status'); if(status) status.textContent=valid?_t('pricing_ready'):_t('pricing_invalid');
+    return valid ? {capm,apt,spread:apt-capm} : null;
 }
 
 
 // --- Financial Strategy Analysis ---
+Object.assign(texts, {
+    fundamental_nav_inputs:{en:'Financial inputs',fa:'ورودی‌های مالی'},
+    financial_guidance_summary:{en:'Input and accounting guidance',fa:'راهنمای ورود داده و مبانی حسابداری'},
+    financial_period_title:{en:'Reporting period & flow basis',fa:'دوره گزارش و مبنای نمایش جریان'},
+    financial_group_fields:{en:'{count} inputs',fa:'{count} ورودی'},
+    quote_optional_summary:{en:'Optional market quote',fa:'دریافت اختیاری داده بازار'},
+    comparison_steps_summary:{en:'How to build a reliable peer set',fa:'روش ساخت گروه همتای قابل‌مقایسه'}
+});
 const financialInputGroups = [
     { title: 'Dividend and Return Strategy', fields: [
         ['shares-outstanding', 'Shares Outstanding'], ['net-income', 'Net Income'], ['dividends-paid', 'Total Dividends Paid'],
@@ -3132,15 +3318,17 @@ function renderFinancialInputs() {
     const host = document.getElementById('financial-input-groups');
     if (!host) return;
     const previousValues = Object.fromEntries([...host.querySelectorAll('[data-financial-input]')].map(input => [input.dataset.financialInput, input.value]));
-    host.innerHTML = financialInputGroups.map(group => `
-        <fieldset class="border border-dark-border rounded-lg p-4">
-            <legend class="px-2 text-lg font-semibold">${currentLang === 'fa' ? financialFa.group[group.title] || group.title : group.title}</legend>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    const previouslyRendered = host.querySelectorAll('details[data-financial-group]').length > 0;
+    const openGroups = new Set([...host.querySelectorAll('details[data-financial-group][open]')].map(group => group.dataset.financialGroup));
+    host.innerHTML = financialInputGroups.map((group,index) => `
+        <details class="financial-input-group" data-financial-group="${group.title}" ${(openGroups.has(group.title) || (!previouslyRendered && index === 0)) ? 'open' : ''}>
+            <summary><span>${currentLang === 'fa' ? financialFa.group[group.title] || group.title : group.title}</span><small>${_t('financial_group_fields',{count:new Intl.NumberFormat(currentLang==='fa'?'fa-IR':'en-US').format(group.fields.length)})}</small></summary>
+            <div class="financial-input-fields">
                 ${group.fields.map(([id, label]) => `<label for="financial-${id}" class="text-sm">${currentLang === 'fa' ? financialFa.fields[id] || label : label}
                     <input type="text" inputmode="decimal" id="financial-${id}" data-financial-input="${id}" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="${currentLang === 'fa' ? 'مقدار را وارد کنید' : 'Enter value'}">
                 </label>`).join('')}
             </div>
-        </fieldset>`).join('');
+        </details>`).join('');
     host.querySelectorAll('[data-financial-input]').forEach(input => { if (previousValues[input.dataset.financialInput] !== undefined) input.value = previousValues[input.dataset.financialInput]; });
     host.querySelectorAll('[data-financial-input]').forEach(input => input.addEventListener('input', () => {
         financialMetrics = null;
@@ -3272,7 +3460,7 @@ function renderAnalystDashboard(get) {
     const flagged=quality.filter(card=>card.classList.contains('warn')||card.classList.contains('missing')).length;
     const wc=document.getElementById('analyst-data-status');if(wc)wc.textContent=currentLang==='fa'?`${quality.length-flagged} کنترل بدون هشدار · ${flagged} مورد برای بررسی`:`${quality.length-flagged} checks clear · ${flagged} review items`;
     let rawWacc=parseLocalizedNumber(document.querySelector('[data-dcf="base-wacc"]')?.value||'');
-    if(document.getElementById('dcf-use-derived-wacc')?.checked){const pct=id=>{const n=parseLocalizedNumber(document.getElementById(id)?.value||'');return Number.isFinite(n)?n/100:NaN;};const taxInput=parseLocalizedNumber(document.getElementById('dcf-tax')?.value||''),tax=Number.isFinite(taxInput)?taxInput/100:get('tax-rate')/100,rf=pct('dcf-risk-free'),erp=pct('dcf-erp'),costDebt=pct('dcf-cost-debt'),beta=parseLocalizedNumber(document.getElementById('dcf-beta')?.value||''),equity=get('current-share-price')*get('shares-outstanding'),debt=get('interest-bearing-debt'),capital=equity+debt,coe=rf+beta*erp;rawWacc=Number.isFinite(tax)&&Number.isFinite(coe)&&Number.isFinite(costDebt)&&capital>0&&debt>=0?(coe*equity+costDebt*(1-tax)*debt)/capital:NaN;}
+    if(document.getElementById('dcf-use-derived-wacc')?.checked){const pct=id=>{const n=parseLocalizedNumber(document.getElementById(id)?.value||'');return Number.isFinite(n)?n/100:NaN;};const taxInput=parseLocalizedNumber(document.getElementById('dcf-tax')?.value||''),tax=Number.isFinite(taxInput)?taxInput/100:get('tax-rate')/100,rf=pct('dcf-risk-free'),erp=pct('dcf-erp'),costDebt=pct('dcf-cost-debt'),costPreferred=pct('dcf-preferred-cost'),beta=parseLocalizedNumber(document.getElementById('dcf-beta')?.value||''),equity=get('current-share-price')*get('shares-outstanding'),debt=get('interest-bearing-debt'),preferred=Number(document.getElementById('dcf-preferred-claim')?.value||0),capital=equity+debt+preferred,coe=rf+beta*erp;rawWacc=Number.isFinite(tax)&&Number.isFinite(coe)&&Number.isFinite(costDebt)&&capital>0&&debt>=0&&preferred>=0&&(preferred===0||Number.isFinite(costPreferred))?(coe*equity+costDebt*(1-tax)*debt+(preferred>0?costPreferred*preferred:0))/capital:NaN;}
     const roic=value('roic'),roe=value('dupontRoe'),margin=value('dupontMargin'),turnover=value('dupontTurnover'),multiplier=value('equityMultiplier'),cfoNetIncome=value('cfoNetIncome'),fcf=value('fcf');
     const months=Number(document.getElementById('financial-period-months')?.value||12),flowBasis=document.getElementById('financial-flow-basis')?.value||'annualized';
     const annualBasisComparable=flowBasis==='annualized'||months===12,wacc=annualBasisComparable&&Number.isFinite(rawWacc)?rawWacc:NaN;
@@ -3344,11 +3532,17 @@ function runScenarioDCF() {
     const monthsRaw=Number(document.getElementById('financial-period-months')?.value||12), periodValid=Number.isInteger(monthsRaw)&&monthsRaw>0&&monthsRaw<=60, annualize=periodValid?12/monthsRaw:1;
     const sales=get('sales')*annualize, ebit=get('ebit')*annualize, reportedCapexRaw=get('reported-capex'), capexReported=Number.isFinite(reportedCapexRaw)?Math.abs(reportedCapexRaw)*annualize:NaN, capexEstimate=Number.isFinite(get('fixed-assets-current'))&&Number.isFinite(get('fixed-assets-prior'))&&Number.isFinite(get('depreciation-current'))?(get('fixed-assets-current')-get('fixed-assets-prior'))*annualize+get('depreciation-current')*annualize:NaN;
     const capex=Number.isFinite(capexReported)?capexReported:capexEstimate, depreciation=get('depreciation-current')*annualize, shares=get('shares-outstanding'), debt=get('interest-bearing-debt'), cash=get('cash-equivalents'), price=get('current-share-price');
+    const readClaim=id=>{const field=document.getElementById(id),raw=field?.value?.trim();return !raw?0:parseLocalizedNumber(raw);};
+    const preferredClaim=readClaim('dcf-preferred-claim'),minorityClaim=readClaim('dcf-minority-claim'),otherClaim=readClaim('dcf-other-claim'),preferredCostRaw=document.getElementById('dcf-preferred-cost')?.value?.trim(),preferredCost=preferredCostRaw?parseLocalizedNumber(preferredCostRaw)/100:NaN;
     const capexIntensityInput=parseLocalizedNumber(document.getElementById('dcf-capex-sales')?.value||''),daIntensityInput=parseLocalizedNumber(document.getElementById('dcf-da-sales')?.value||'');
     const capexIntensity=Number.isFinite(capexIntensityInput)?capexIntensityInput/100:(Number.isFinite(capex)&&sales>0?capex/sales:NaN),daIntensity=Number.isFinite(daIntensityInput)?daIntensityInput/100:(Number.isFinite(depreciation)&&sales>0?depreciation/sales:NaN);
-    const currentAssets=get('current-assets'), currentLiabilities=get('current-liabilities');
+    const currentNwcItems=[get('accounts-receivable'),get('inventory'),get('accounts-payable')];
+    const priorNwcItems=[get('accounts-receivable-prior'),get('inventory-prior'),get('accounts-payable-prior')];
+    const currentOperatingNwc=currentNwcItems.every(Number.isFinite)?currentNwcItems[0]+currentNwcItems[1]-currentNwcItems[2]:NaN;
+    const priorOperatingNwc=priorNwcItems.every(Number.isFinite)?priorNwcItems[0]+priorNwcItems[1]-priorNwcItems[2]:NaN;
+    const openingClosingNwc=Number.isFinite(currentOperatingNwc)&&Number.isFinite(priorOperatingNwc)?(currentOperatingNwc+priorOperatingNwc)/2:currentOperatingNwc;
     const enteredNwc=parseLocalizedNumber(document.getElementById('dcf-nwc-sales')?.value||'');
-    const nwcRatio=Number.isFinite(enteredNwc)?enteredNwc/100:(Number.isFinite(currentAssets)&&Number.isFinite(currentLiabilities)&&sales>0?(currentAssets-currentLiabilities)/sales:NaN);
+    const nwcRatio=Number.isFinite(enteredNwc)?enteredNwc/100:(Number.isFinite(openingClosingNwc)&&sales>0?openingClosingNwc/sales:NaN);
     const years=Math.round(Math.max(3,Math.min(10,Number(document.getElementById('dcf-years')?.value)||5)));
     const readPercent=selector=>{const raw=document.querySelector(selector)?.value?.trim();if(raw===' '||raw==='')return NaN;const value=parseLocalizedNumber(raw);return Number.isFinite(value)?value/100:NaN;};
     const taxInput=document.getElementById('dcf-tax')?.value?.trim(), statementTax=get('tax-rate');
@@ -3358,19 +3552,19 @@ function runScenarioDCF() {
     const derive=document.getElementById('dcf-use-derived-wacc')?.checked;
     const rf=readPercent('#dcf-risk-free'), beta=parseLocalizedNumber(document.getElementById('dcf-beta')?.value||''), erp=readPercent('#dcf-erp'), costDebt=readPercent('#dcf-cost-debt');
     const marketEquity=Number.isFinite(price)&&price>0&&Number.isFinite(shares)&&shares>0?price*shares:NaN;
-    const capitalBase=marketEquity+debt;
+    const capitalBase=marketEquity+debt+preferredClaim;
     const costEquity=Number.isFinite(rf)&&Number.isFinite(beta)&&Number.isFinite(erp)?rf+beta*erp:NaN;
-    const waccDerived=Number.isFinite(costEquity)&&Number.isFinite(costDebt)&&Number.isFinite(tax)&&Number.isFinite(capitalBase)&&capitalBase>0&&marketEquity>=0&&debt>=0?(costEquity*marketEquity+costDebt*(1-tax)*debt)/capitalBase:NaN;
+    const waccDerived=Number.isFinite(costEquity)&&Number.isFinite(costDebt)&&Number.isFinite(tax)&&Number.isFinite(capitalBase)&&capitalBase>0&&marketEquity>=0&&debt>=0&&preferredClaim>=0&&minorityClaim>=0&&otherClaim>=0&&(preferredClaim===0||(Number.isFinite(preferredCost)&&preferredCost>=0))?(costEquity*marketEquity+costDebt*(1-tax)*debt+(preferredClaim>0?preferredCost*preferredClaim:0))/capitalBase:NaN;
     const waccStatus=document.getElementById('dcf-wacc-status');
-    if(waccStatus)waccStatus.textContent=derive?(Number.isFinite(waccDerived)?_t('dcf_wacc_derived',{coe:(costEquity*100).toFixed(2),equityWeight:(marketEquity/capitalBase*100).toFixed(2),debtWeight:(debt/capitalBase*100).toFixed(2),wacc:(waccDerived*100).toFixed(2)}):_t('dcf_wacc_missing')):_t('dcf_wacc_manual_note');
+    if(waccStatus)waccStatus.textContent=derive?(Number.isFinite(waccDerived)?_t('dcf_wacc_derived',{coe:(costEquity*100).toFixed(2),equityWeight:(marketEquity/capitalBase*100).toFixed(2),debtWeight:(debt/capitalBase*100).toFixed(2),preferredWeight:(preferredClaim/capitalBase*100).toFixed(2),wacc:(waccDerived*100).toFixed(2)}):_t('dcf_wacc_missing')):_t('dcf_wacc_manual_note');
     if(derive&&Number.isFinite(waccDerived))inputs.forEach(s=>s.wacc=waccDerived);
-    const valid=periodValid&&Number.isFinite(sales)&&sales>0&&Number.isFinite(capexIntensity)&&capexIntensity>=0&&Number.isFinite(daIntensity)&&daIntensity>=0&&Number.isFinite(nwcRatio)&&Number.isFinite(shares)&&shares>0&&Number.isFinite(debt)&&Number.isFinite(cash)&&Number.isFinite(tax)&&(!derive||Number.isFinite(waccDerived))&&inputs.every(s=>[s.growth,s.margin,s.wacc,s.terminal].every(Number.isFinite)&&s.growth>-.95&&s.growth<=1&&s.margin>=-1&&s.margin<=1&&s.wacc>0&&s.wacc<=1&&s.wacc>s.terminal&&s.terminal>-.25&&s.terminal<1);
+    const valid=periodValid&&Number.isFinite(sales)&&sales>0&&Number.isFinite(capexIntensity)&&capexIntensity>=0&&Number.isFinite(daIntensity)&&daIntensity>=0&&Number.isFinite(nwcRatio)&&Number.isFinite(shares)&&shares>0&&Number.isFinite(debt)&&Number.isFinite(cash)&&Number.isFinite(tax)&&Number.isFinite(preferredClaim)&&preferredClaim>=0&&Number.isFinite(minorityClaim)&&minorityClaim>=0&&Number.isFinite(otherClaim)&&otherClaim>=0&&(preferredClaim===0||!derive||(Number.isFinite(preferredCost)&&preferredCost>=0))&&(!derive||Number.isFinite(waccDerived))&&inputs.every(s=>[s.growth,s.margin,s.wacc,s.terminal].every(Number.isFinite)&&s.growth>-.95&&s.growth<=1&&s.margin>=-1&&s.margin<=1&&s.wacc>0&&s.wacc<=1&&s.wacc>s.terminal&&s.terminal>-.25&&s.terminal<1);
     if(!valid){host.innerHTML=`<p class="comparison-warning">${_t('dcf_invalid')}</p>`;if(window.Plotly)Plotly.purge('dcf-chart');return;}
-    const project=(s,wacc=s.wacc,terminal=s.terminal)=>{let pv=0,rev=sales,priorNwc=sales*nwcRatio;const fcffs=[];for(let year=1;year<=years;year++){rev*=1+s.growth;const forecastNwc=rev*nwcRatio,deltaNwc=forecastNwc-priorNwc,forecastEbit=rev*s.margin,nopat=forecastEbit-Math.max(forecastEbit,0)*tax;const fcff=nopat+rev*daIntensity-rev*capexIntensity-deltaNwc;fcffs.push(fcff);pv+=fcff/(1+wacc)**year;priorNwc=forecastNwc;}const terminalFcff=fcffs.at(-1)*(1+terminal);const terminalValue=terminalFcff/(wacc-terminal);const ev=pv+terminalValue/(1+wacc)**years;const equityValue=ev+cash-debt;return {ev,equityValue,perShare:equityValue/shares,fcffs,terminalValue,terminalShare:ev>0?terminalValue/(1+wacc)**years/ev*100:NaN};};
+    const project=(s,wacc=s.wacc,terminal=s.terminal)=>{let pv=0,rev=sales,priorNwc=sales*nwcRatio;const fcffs=[];for(let year=1;year<=years;year++){rev*=1+s.growth;const forecastNwc=rev*nwcRatio,deltaNwc=forecastNwc-priorNwc,forecastEbit=rev*s.margin,nopat=forecastEbit-Math.max(forecastEbit,0)*tax;const fcff=nopat+rev*daIntensity-rev*capexIntensity-deltaNwc;fcffs.push(fcff);pv+=fcff/(1+wacc)**year;priorNwc=forecastNwc;}const terminalFcff=fcffs.at(-1)*(1+terminal);const terminalValue=terminalFcff/(wacc-terminal);const ev=pv+terminalValue/(1+wacc)**years;const equityValue=ev+cash-debt-preferredClaim-minorityClaim-otherClaim;return {ev,equityValue,perShare:equityValue/shares,fcffs,terminalValue,terminalShare:ev>0?terminalValue/(1+wacc)**years/ev*100:NaN};};
     const cases=inputs.map(s=>{const result=project(s);return {...s,...result,upside:Number.isFinite(price)&&price>0?(result.perShare/price-1)*100:NaN};});
     const number=value=>new Intl.NumberFormat(currentLang==='fa'?'fa-IR':'en-US',{maximumFractionDigits:2}).format(value);
     const currentMargin=Number.isFinite(ebit)&&Number.isFinite(sales)&&sales>0?ebit/sales*100:NaN;
-    host.innerHTML=`<p class="text-xs text-dark-text-muted mb-2">${_t('dcf_current_margin',{margin:Number.isFinite(currentMargin)?number(currentMargin):_t('comparison_unavailable')})} · ${_t('dcf_nwc_sales')}: ${number(nwcRatio*100)}% · ${_t('dcf_capex_sales')}: ${number(capexIntensity*100)}% · ${_t('dcf_da_sales')}: ${number(daIntensity*100)}% · ${_t('dcf_terminal_share')}: ${number(cases.find(s=>s.name==='base').terminalShare)}%</p><div class="overflow-x-auto"><table class="peer-table dcf-table" role="table" aria-label="${_t('dcf_scenario')}"><thead><tr><th>${_t('dcf_scenario')}</th><th>${_t('dcf_ev')}</th><th>${_t('dcf_equity')}</th><th>${_t('dcf_price')}</th><th>${_t('dcf_current')}</th><th>${_t('dcf_upside')}</th></tr></thead><tbody>${cases.map(s=>`<tr><th scope="row" data-label="${_t('dcf_scenario')}">${_t(`dcf_${s.name}`)}</th><td data-label="${_t('dcf_ev')}">${number(s.ev)}</td><td data-label="${_t('dcf_equity')}">${number(s.equityValue)}</td><td data-label="${_t('dcf_price')}">${number(s.perShare)}</td><td data-label="${_t('dcf_current')}">${Number.isFinite(price)?number(price):_t('comparison_unavailable')}</td><td data-label="${_t('dcf_upside')}">${Number.isFinite(s.upside)?`${number(s.upside)}%`:_t('dcf_share_warning')}</td></tr>`).join('')}</tbody></table></div>`;
+    host.innerHTML=`<p class="text-xs text-dark-text-muted mb-2">${_t('dcf_current_margin',{margin:Number.isFinite(currentMargin)?number(currentMargin):_t('comparison_unavailable')})} · ${_t('dcf_nwc_sales')}: ${number(nwcRatio*100)}% · ${_t('dcf_capex_sales')}: ${number(capexIntensity*100)}% · ${_t('dcf_da_sales')}: ${number(daIntensity*100)}% · ${_t('dcf_claims_deducted')}: ${number(preferredClaim+minorityClaim+otherClaim)} · ${_t('dcf_terminal_share')}: ${number(cases.find(s=>s.name==='base').terminalShare)}%</p><div class="overflow-x-auto"><table class="peer-table dcf-table" role="table" aria-label="${_t('dcf_scenario')}"><thead><tr><th>${_t('dcf_scenario')}</th><th>${_t('dcf_ev')}</th><th>${_t('dcf_equity')}</th><th>${_t('dcf_price')}</th><th>${_t('dcf_current')}</th><th>${_t('dcf_upside')}</th></tr></thead><tbody>${cases.map(s=>`<tr><th scope="row" data-label="${_t('dcf_scenario')}">${_t(`dcf_${s.name}`)}</th><td data-label="${_t('dcf_ev')}">${number(s.ev)}</td><td data-label="${_t('dcf_equity')}">${number(s.equityValue)}</td><td data-label="${_t('dcf_price')}">${number(s.perShare)}</td><td data-label="${_t('dcf_current')}">${Number.isFinite(price)?number(price):_t('comparison_unavailable')}</td><td data-label="${_t('dcf_upside')}">${Number.isFinite(s.upside)?`${number(s.upside)}%`:_t('dcf_share_warning')}</td></tr>`).join('')}</tbody></table></div>`;
     decorateResearchTooltips(host);
     const sensitivityHost=document.getElementById('dcf-sensitivity'),base=inputs.find(s=>s.name==='base'),baseWacc=base.wacc,baseTerm=base.terminal,waccSteps=[-.02,-.01,0,.01,.02],terminalSteps=[-.01,-.005,0,.005,.01];
     if(sensitivityHost){sensitivityHost.innerHTML=`<h3 class="font-semibold mt-4 mb-1">${_t('dcf_sensitivity_title')}</h3><p class="text-xs text-dark-text-muted mb-2">${_t('dcf_sensitivity_note')}</p><table class="peer-table sensitivity-table"><thead><tr><th>WACC \ g</th>${terminalSteps.map(change=>`<th>${number((baseTerm+change)*100)}%</th>`).join('')}</tr></thead><tbody>${waccSteps.map(dw=>`<tr><th>${number((baseWacc+dw)*100)}%</th>${terminalSteps.map(dg=>{const w=baseWacc+dw,g=baseTerm+dg,val=w>g?project(base,w,g).perShare:NaN;return `<td class="${Number.isFinite(val)&&val>=0?'sensitivity-positive':'sensitivity-negative'}">${Number.isFinite(val)?number(val):'—'}</td>`;}).join('')}</tr>`).join('')}</tbody></table>`;decorateResearchTooltips(sensitivityHost);}
@@ -3870,10 +4064,12 @@ let stagedFinancialWorkbookRows = [];
 let stagedFinancialWorkbookSource = '';
 function normalizeWorkbookHeader(value) { return String(value??'').replace(/^\uFEFF/,'').trim().toLowerCase().replace(/[\s_-]+/g,''); }
 function workbookCell(row, aliases) { const keys=Object.keys(row);const key=keys.find(item=>aliases.includes(normalizeWorkbookHeader(item)));return key===undefined?undefined:row[key]; }
-function parseFinancialWorkbook(file) {
+async function parseFinancialWorkbook(file) {
     if(!file) throw new Error('missing-file');
-    if(!window.XLSX) throw new Error('xlsx-unavailable');
-    return file.arrayBuffer().then(buffer=>{const workbook=XLSX.read(buffer,{type:'array',cellDates:false});const first=workbook.SheetNames[0];if(!first)throw new Error('sheet');return XLSX.utils.sheet_to_json(workbook.Sheets[first],{defval:'',raw:false});});
+    await ensureSpreadsheetLibrary();
+    const buffer=await file.arrayBuffer(),workbook=XLSX.read(buffer,{type:'array',cellDates:false}),first=workbook.SheetNames[0];
+    if(!first)throw new Error('sheet');
+    return XLSX.utils.sheet_to_json(workbook.Sheets[first],{defval:'',raw:false});
 }
 function workbookFieldId(raw) {
     const field=String(raw??'').trim();
@@ -3959,7 +4155,7 @@ function initializeCompanyComparison() {
     document.getElementById('compare-period-select').addEventListener('change',renderCompanyComparisonTable);
     document.getElementById('compare-group-select').addEventListener('change',() => {renderComparisonMetricSelector();renderCompanyComparisonTable();drawCompanyTrendChart();});
     document.getElementById('compare-trend-metric').addEventListener('change',() => {renderCompanyComparisonTable();drawCompanyTrendChart();});
-    document.getElementById('compare-industry-select').addEventListener('change',renderCompanyComparisonTable);
+    document.getElementById('compare-industry-select').addEventListener('change',() => {renderCompanyComparisonTable();drawCompanyTrendChart();});
     document.getElementById('company-source-pdf').addEventListener('change',event=>{const file=event.target.files?.[0];if(!file)return;document.getElementById('company-source-document').value=cleanCompanyText(file.name,160);event.target.value='';if(activeCompanyId){companyFormDirty=true;setCompanyStatus(_t('company_unsaved_status'));}});
     refreshCompanyComparison();
     document.getElementById('preview-financial-workbook').addEventListener('click',previewFinancialWorkbook);
@@ -3979,6 +4175,97 @@ function redrawCompanyComparisonForLanguageChange() {
     renderCompanyComparisonTable();
     drawCompanyTrendChart();
     document.getElementById('company-data-status').textContent=companyFormDirty?_t('company_unsaved_status'):(company?_t('company_records_loaded',{company:company.name,count:new Intl.NumberFormat(currentLang==='fa'?'fa-IR':'en-US').format(sortedCompanyPeriods(company.periods).length)}):_t('company_data_empty'));
+}
+
+Object.assign(texts, {
+  company_actions_label:{en:'Company data actions',fa:'عملیات داده‌های شرکت'},company_setup_actions_label:{en:'Company and period setup',fa:'تعریف شرکت و دوره'},company_workflow_actions_label:{en:'Analysis workflow',fa:'گردش‌کار تحلیل'},company_data_actions_label:{en:'Company data management',fa:'مدیریت داده‌های شرکت'},company_setup_actions_title:{en:'Company & period',fa:'شرکت و دوره مالی'},company_workflow_actions_title:{en:'Analysis workflow',fa:'گردش‌کار تحلیل'},company_data_actions_title:{en:'Data management',fa:'مدیریت داده‌ها'}
+});
+
+// --- Advanced financial models ---
+function modelNumber(id) {
+    const element = document.getElementById(id);
+    if (!element || element.value.trim() === '') return NaN;
+    return element.type === 'number' ? Number(element.value) : parseLocalizedNumber(element.value);
+}
+function modelFormat(value, digits = 2) {
+    if (!Number.isFinite(value)) return '—';
+    return new Intl.NumberFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US', {maximumFractionDigits:digits, minimumFractionDigits:digits}).format(value);
+}
+function modelPercent(value, digits = 2) { return Number.isFinite(value) ? `${modelFormat(value * 100, digits)}%` : '—'; }
+function setModelStatus(id, message, kind = 'info') {
+    const el = document.getElementById(id); if (!el) return;
+    el.textContent = message; el.dataset.state = kind;
+}
+function calculateCapitalBudget() {
+    const raw = document.getElementById('capital-cashflows')?.value || '';
+    const flows = raw.split(/[\n;\t]+/).map(s => parseLocalizedNumber(s.trim())).filter(Number.isFinite);
+    const freq = ({annual:1,quarterly:4,monthly:12})[document.getElementById('capital-period')?.value] || 1;
+    const annualDiscount = modelNumber('capital-discount-rate') / 100;
+    const annualReinvest = modelNumber('capital-reinvest-rate') / 100;
+    const valid = flows.length >= 2 && flows.some(v => v < 0) && flows.some(v => v > 0) && Number.isFinite(annualDiscount) && annualDiscount > -1 && Number.isFinite(annualReinvest) && annualReinvest > -1;
+    if (!valid) {
+        ['capital-npv-result','capital-irr-result','capital-mirr-result','capital-pi-result','capital-payback-result','capital-discounted-payback-result','capital-eaa-result'].forEach(id => {const e=document.getElementById(id);if(e)e.textContent='—';});
+        setModelStatus('capital-budget-status', _t('capital_invalid'), 'error');
+        if (window.Plotly) Plotly.purge('capital-budget-chart'); return;
+    }
+    const n=flows.length-1, periodicRate=Math.pow(1+annualDiscount,1/freq)-1, periodicReinvest=Math.pow(1+annualReinvest,1/freq)-1;
+    const discounted=flows.map((v,i)=>v/Math.pow(1+periodicRate,i));
+    const npv=discounted.reduce((a,b)=>a+b,0), positivePV=discounted.slice(1).filter(v=>v>0).reduce((a,b)=>a+b,0);
+    const pi=flows[0]<0?positivePV/Math.abs(flows[0]):NaN;
+    function npvAtGross(g) { return flows.reduce((sum,cf,t)=>sum+cf/Math.pow(g,t),0); }
+    // Scan logarithmically in gross periodic return, then bisect each sign-changing bracket.
+    const roots=[]; let prevG=0.0001, prev=npvAtGross(prevG);
+    for(let i=1;i<=1800;i++) {
+        const g=0.0001*Math.pow(1000000,i/1800), value=npvAtGross(g);
+        if(Number.isFinite(prev)&&Number.isFinite(value)&&prev*value<0) {
+            let lo=prevG,hi=g,flo=prev;
+            for(let j=0;j<70;j++){const mid=(lo+hi)/2,fmid=npvAtGross(mid);if(flo*fmid<=0)hi=mid;else{lo=mid;flo=fmid;}}
+            const annual=(Math.pow((lo+hi)/2,freq)-1)*100;
+            if(Number.isFinite(annual)&&!roots.some(r=>Math.abs(r-annual)<1e-5))roots.push(annual);
+        }
+        prevG=g;prev=value;
+    }
+    let pvNeg=0,fvPos=0;flows.forEach((cf,t)=>{if(cf<0)pvNeg+=cf/Math.pow(1+periodicRate,t);if(cf>0)fvPos+=cf*Math.pow(1+periodicReinvest,n-t);});
+    const mirr=pvNeg<0&&fvPos>0?(Math.pow(fvPos/-pvNeg,1/n)-1):NaN;
+    function payback(values) {let cumulative=0;for(let t=0;t<values.length;t++){const before=cumulative;cumulative+=values[t];if(cumulative>=0&&t>0&&values[t]>0)return (t-1)+(-before/values[t]);}return NaN;}
+    const nominalPayback=payback(flows), discountedPayback=payback(discounted);
+    const eaa=Math.abs(periodicRate)<1e-10?npv/n:npv*periodicRate/(1-Math.pow(1+periodicRate,-n));
+    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+    set('capital-npv-result',modelFormat(npv)); set('capital-irr-result',roots.length?roots.map(r=>`${modelFormat(r)}%`).join(' / '):_t('capital_no_irr'));
+    set('capital-mirr-result',modelPercent((Math.pow(1+mirr,freq)-1))); set('capital-pi-result',modelFormat(pi,3));
+    set('capital-payback-result',Number.isFinite(nominalPayback)?`${modelFormat(nominalPayback,2)} ${_t(`capital_period_${freq}`)}`:_t('capital_not_recovered'));
+    set('capital-discounted-payback-result',Number.isFinite(discountedPayback)?`${modelFormat(discountedPayback,2)} ${_t(`capital_period_${freq}`)}`:_t('capital_not_recovered'));
+    set('capital-eaa-result',modelFormat(eaa));
+    setModelStatus('capital-budget-status', roots.length>1?_t('capital_multiple_irr',{count:roots.length}):roots.length===0?_t('capital_no_irr_hint'):_t('capital_calculated'), roots.length>1?'warning':'success');
+    const host=document.getElementById('capital-budget-chart');
+    if(host&&window.Plotly){
+        const cumulative=[],cumDiscounted=[];flows.forEach((v,i)=>{cumulative.push((cumulative.at(-1)||0)+v);cumDiscounted.push((cumDiscounted.at(-1)||0)+discounted[i]);});
+        const periods=flows.map((_,i)=>`${_t('capital_t')} ${i}`);
+        Plotly.react(host,[{type:'bar',name:_t('capital_flow'),x:periods,y:flows,marker:{color:flows.map(x=>x<0?'#fb7185':'#4ade80')},hovertemplate:'%{x}<br>%{y:,.2f}<extra></extra>'},{type:'scatter',mode:'lines+markers',name:_t('capital_cumulative'),x:periods,y:cumulative,line:{color:'#60a5fa',width:3},yaxis:'y2'},{type:'scatter',mode:'lines',name:_t('capital_cumulative_pv'),x:periods,y:cumDiscounted,line:{color:'#c084fc',dash:'dot'},yaxis:'y2'}],{margin:{t:28,r:22,b:55,l:65},legend:{orientation:'h',y:-.3},xaxis:{color:'#a9bbca',gridcolor:'#283b4f'},yaxis:{title:_t('capital_flow'),color:'#a9bbca',gridcolor:'#283b4f'},yaxis2:{title:_t('capital_cumulative'),overlaying:'y',side:'right',showgrid:false,color:'#a9bbca'},paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#dce8f2'},autosize:true},{responsive:true,displaylogo:false,modeBarButtonsToRemove:['sendDataToCloud','editInChartStudio']});
+    }
+}
+function calculateWaccModel() {
+    const E=modelNumber('wacc-equity-value'),D=modelNumber('wacc-debt-value'),P=modelNumber('wacc-preferred-value');
+    const re=modelNumber('wacc-cost-equity')/100,rd=modelNumber('wacc-cost-debt')/100,rp=modelNumber('wacc-cost-preferred')/100,tax=modelNumber('wacc-tax')/100,total=E+D+P;
+    const valid=[E,D,P,re,rd,rp,tax].every(Number.isFinite)&&E>=0&&D>=0&&P>=0&&total>0&&tax>=0&&tax<=1;
+    if(!valid){['wacc-result','wacc-equity-weight-result','wacc-debt-weight-result','wacc-preferred-weight-result'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='—';});setModelStatus('wacc-status',_t('wacc_invalid'),'error');return;}
+    const weights=[E/total,D/total,P/total],wacc=weights[0]*re+weights[1]*rd*(1-tax)+weights[2]*rp;
+    document.getElementById('wacc-result').textContent=modelPercent(wacc);
+    ['wacc-equity-weight-result','wacc-debt-weight-result','wacc-preferred-weight-result'].forEach((id,i)=>document.getElementById(id).textContent=modelPercent(weights[i]));
+    setModelStatus('wacc-status',_t('wacc_calculated'),'success');
+}
+function normalPdf(x){return Math.exp(-.5*x*x)/Math.sqrt(2*Math.PI);}
+function normalCdf(x){const z=Math.abs(x),t=1/(1+.2316419*z),poly=t*(.319381530+t*(-.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));const p=1-normalPdf(z)*poly;return x>=0?p:1-p;}
+function calculateOptionModel() {
+    const S=modelNumber('option-spot'),K=modelNumber('option-strike'),T=modelNumber('option-maturity'),r=modelNumber('option-rate')/100,q=modelNumber('option-dividend')/100,sigma=modelNumber('option-volatility')/100;
+    if(![S,K,T,r,q,sigma].every(Number.isFinite)||S<=0||K<=0||T<=0||sigma<=0){['option-call-result','option-put-result','option-call-delta','option-put-delta','option-gamma','option-vega','option-call-theta','option-put-theta','option-call-rho','option-put-rho'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='—';});setModelStatus('option-status',_t('options_invalid'),'error');if(window.Plotly)Plotly.purge('option-payoff-chart');return;}
+    const root=sigma*Math.sqrt(T),d1=(Math.log(S/K)+(r-q+.5*sigma*sigma)*T)/root,d2=d1-root,dfq=Math.exp(-q*T),dfr=Math.exp(-r*T),n1=normalCdf(d1),n2=normalCdf(d2),phi=normalPdf(d1);
+    const call=S*dfq*n1-K*dfr*n2,put=K*dfr*normalCdf(-d2)-S*dfq*normalCdf(-d1),callDelta=dfq*n1,putDelta=dfq*(n1-1),gamma=dfq*phi/(S*root),vega=S*dfq*phi*Math.sqrt(T)/100;
+    const callTheta=(-S*dfq*phi*sigma/(2*Math.sqrt(T))-r*K*dfr*n2+q*S*dfq*n1),putTheta=(-S*dfq*phi*sigma/(2*Math.sqrt(T))+r*K*dfr*normalCdf(-d2)-q*S*dfq*normalCdf(-n1));
+    const callRho=K*T*dfr*n2/100,putRho=-K*T*dfr*normalCdf(-d2)/100;
+    const values={'option-call-result':call,'option-put-result':put,'option-call-delta':callDelta,'option-put-delta':putDelta,'option-gamma':gamma,'option-vega':vega,'option-call-theta':callTheta,'option-put-theta':putTheta,'option-call-rho':callRho,'option-put-rho':putRho};
+    Object.entries(values).forEach(([id,v])=>document.getElementById(id).textContent=modelFormat(v,4));setModelStatus('option-status',_t('options_calculated'),'success');
+    const host=document.getElementById('option-payoff-chart');if(host&&window.Plotly){const spots=Array.from({length:81},(_,i)=>S*(.2+i*1.6/80)),calls=spots.map(x=>{const a=(Math.log(x/K)+(r-q+.5*sigma*sigma)*T)/root,b=a-root;return x*dfq*normalCdf(a)-K*dfr*normalCdf(b);}),puts=spots.map(x=>{const a=(Math.log(x/K)+(r-q+.5*sigma*sigma)*T)/root,b=a-root;return K*dfr*normalCdf(-b)-x*dfq*normalCdf(-a);});Plotly.react(host,[{type:'scatter',mode:'lines',name:_t('option_call'),x:spots,y:calls,line:{color:'#4ade80',width:3}},{type:'scatter',mode:'lines',name:_t('option_put'),x:spots,y:puts,line:{color:'#60a5fa',width:3}},{type:'scatter',mode:'lines',name:_t('option_intrinsic_call'),x:spots,y:spots.map(x=>Math.max(x-K,0)),line:{color:'#86efac',dash:'dot'}},{type:'scatter',mode:'lines',name:_t('option_intrinsic_put'),x:spots,y:spots.map(x=>Math.max(K-x,0)),line:{color:'#93c5fd',dash:'dot'}}],{margin:{t:25,r:20,b:55,l:60},legend:{orientation:'h',y:-.3},xaxis:{title:_t('option_spot'),color:'#a9bbca',gridcolor:'#283b4f'},yaxis:{title:_t('option_value'),color:'#a9bbca',gridcolor:'#283b4f'},paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#dce8f2'},autosize:true},{responsive:true,displaylogo:false});}
 }
 
 // --- Event Listeners & Initialization ---
@@ -4002,12 +4289,33 @@ document.addEventListener('DOMContentLoaded', () => {
             updatePortfolioAssetUI(); renderFinancialInputs(); redrawCompanyComparisonForLanguageChange();
             if (lastTradingViewQuote) renderTradingViewQuote(lastTradingViewQuote, document.getElementById('tradingview-symbol')?.value || '');
             if (financialMetrics) { renderFinancialResults(); drawFinancialChart(); const get=id=>{const field=document.getElementById(`financial-${id}`);return field&&field.value.trim()!==''?parseLocalizedNumber(field.value):NaN;};renderFinancialQualityChecks(get,Number(document.getElementById('financial-period-months')?.value)||12);renderAnalystDashboard(get); }
+            calculateTimeValueModel(); calculateAssetPricingModels(); calculateCapitalBudget(); calculateWaccModel(); calculateOptionModel();
             if (statusBar && statusBar.dataset.statusKey) updateStatus(statusBar.dataset.statusKey, {}, statusBar.dataset.statusType || 'info');
             decorateResearchTooltips(document);
         });
     }
     updateLanguageUI();
     initializeCompanyComparison();
+
+    const tvmControls = ['tvm-target','tvm-pv','tvm-pmt','tvm-fv','tvm-rate','tvm-years','tvm-frequency','tvm-timing'];
+    tvmControls.forEach(id => document.getElementById(id)?.addEventListener('input',calculateTimeValueModel));
+    tvmControls.filter(id => ['tvm-target','tvm-frequency','tvm-timing'].includes(id)).forEach(id => document.getElementById(id)?.addEventListener('change',calculateTimeValueModel));
+    document.getElementById('calculate-tvm-button')?.addEventListener('click',calculateTimeValueModel);
+    document.getElementById('reset-tvm-button')?.addEventListener('click',() => {
+        const defaults={'tvm-target':'fv','tvm-pv':'10000','tvm-pmt':'500','tvm-fv':'25000','tvm-rate':'8','tvm-years':'10','tvm-frequency':'12','tvm-timing':'end'};
+        Object.entries(defaults).forEach(([id,value])=>{const control=document.getElementById(id);if(control)control.value=value;});
+        calculateTimeValueModel();
+    });
+    ['pricing-rf','pricing-market-return','pricing-market-beta','apt-premium-1','apt-premium-2','apt-premium-3','apt-beta-1','apt-beta-2','apt-beta-3'].forEach(id=>document.getElementById(id)?.addEventListener('input',calculateAssetPricingModels));
+    document.getElementById('calculate-pricing-button')?.addEventListener('click',calculateAssetPricingModels);
+    const capitalControls=['capital-cashflows','capital-discount-rate','capital-reinvest-rate','capital-period'];
+    capitalControls.forEach(id=>document.getElementById(id)?.addEventListener('input',calculateCapitalBudget));
+    document.getElementById('capital-period')?.addEventListener('change',calculateCapitalBudget);
+    document.getElementById('calculate-capital-budget-button')?.addEventListener('click',calculateCapitalBudget);
+    document.getElementById('reset-capital-budget-button')?.addEventListener('click',()=>{document.getElementById('capital-cashflows').value='-100000\n30000\n35000\n40000\n45000';document.getElementById('capital-discount-rate').value='10';document.getElementById('capital-reinvest-rate').value='8';document.getElementById('capital-period').value='annual';calculateCapitalBudget();});
+    ['wacc-equity-value','wacc-debt-value','wacc-preferred-value','wacc-cost-equity','wacc-cost-debt','wacc-cost-preferred','wacc-tax'].forEach(id=>document.getElementById(id)?.addEventListener('input',calculateWaccModel));
+    ['option-spot','option-strike','option-maturity','option-rate','option-dividend','option-volatility'].forEach(id=>document.getElementById(id)?.addEventListener('input',calculateOptionModel));
+    calculateTimeValueModel(); calculateAssetPricingModels(); calculateCapitalBudget(); calculateWaccModel(); calculateOptionModel();
 
     // Tab Navigation
     tabButtons.forEach(button => {
@@ -4016,6 +4324,12 @@ document.addEventListener('DOMContentLoaded', () => {
             switchTab(tabId);
         });
     });
+    const fundamentalSideMenu=document.getElementById('fundamental-side-nav');
+    fundamentalSideMenu?.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{
+        fundamentalSideMenu.querySelectorAll('a').forEach(item=>{item.classList.toggle('active',item===link);if(item===link)item.setAttribute('aria-current','location');else item.removeAttribute('aria-current');});
+    }));
+    window.addEventListener('resize',()=>syncFundamentalSidebar());
+    syncFundamentalSidebar();
 
     // Asset Data
     if (addButton) addButton.addEventListener('click', addAssetDataPoint);
@@ -4055,7 +4369,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const calculateFinancialButton = document.getElementById('calculate-financial-strategy');
     if (calculateFinancialButton) calculateFinancialButton.addEventListener('click', calculateFinancialStrategyMetrics);
     const runDcfButton=document.getElementById('run-dcf-button');if(runDcfButton)runDcfButton.addEventListener('click',runScenarioDCF);
-    document.querySelectorAll('[data-dcf],#dcf-years,#dcf-tax,#dcf-nwc-sales,#dcf-capex-sales,#dcf-da-sales,#dcf-risk-free,#dcf-beta,#dcf-erp,#dcf-cost-debt,#dcf-use-derived-wacc').forEach(input=>input.addEventListener('input',invalidateDcfResults));
+    document.querySelectorAll('[data-dcf],#dcf-years,#dcf-tax,#dcf-nwc-sales,#dcf-capex-sales,#dcf-da-sales,#dcf-risk-free,#dcf-beta,#dcf-erp,#dcf-cost-debt,#dcf-preferred-claim,#dcf-preferred-cost,#dcf-minority-claim,#dcf-other-claim,#dcf-use-derived-wacc').forEach(input=>input.addEventListener('input',invalidateDcfResults));
     document.getElementById('dcf-use-derived-wacc')?.addEventListener('change',()=>{invalidateDcfResults();if(document.getElementById('dcf-wacc-status'))document.getElementById('dcf-wacc-status').textContent=document.getElementById('dcf-use-derived-wacc').checked?_t('dcf_wacc_missing'):_t('dcf_wacc_manual_note');});
     document.getElementById('financial-period-months')?.addEventListener('input',()=>{financialMetrics=null;const result=document.getElementById('financial-results');if(result)result.textContent=currentLang==='fa'?'طول دوره تغییر کرده است؛ محاسبات را دوباره اجرا کنید.':'Reporting period changed; calculate again to refresh results.';const quality=document.getElementById('financial-quality-checks');if(quality)quality.textContent=currentLang==='fa'?'دوره تغییر کرده است؛ محاسبات را دوباره اجرا کنید.':'Reporting period changed; recalculate diagnostics.';const dcf=document.getElementById('dcf-results');if(dcf)dcf.textContent=currentLang==='fa'?'دوره تغییر کرده است؛ DCF را دوباره اجرا کنید.':'Reporting period changed; rerun DCF.';if(window.Plotly){Plotly.purge('financial-chart');Plotly.purge('dcf-chart');}});
     document.getElementById('financial-period-months')?.addEventListener('input',()=>{const notes=document.getElementById('analyst-review-notes');if(notes)notes.innerHTML=`<p>${_t('analyst_stale')}</p>`;const status=document.getElementById('analyst-data-status');if(status)status.textContent=_t('analyst_stale');const sensitivity=document.getElementById('dcf-sensitivity');if(sensitivity)sensitivity.replaceChildren();});
@@ -4069,6 +4383,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Calculate (Asset Analysis)
     if (calculateButton) calculateButton.addEventListener('click', calculateMetrics);
+    document.getElementById('return-frequency')?.addEventListener('change', () => { if (dataPoints.length >= 2) calculateMetrics(); });
 
     // Initial setup for Portfolio Management tab
     if (portfolioAssetsContainer) {
@@ -4181,7 +4496,7 @@ function calculateTreynorRatio(portfolioReturnPerc, riskFreeRatePerc, beta) {
     const portfolioReturn_dec = portfolioReturnPerc / 100;
     const riskFreeRate_dec = riskFreeRatePerc / 100;
     const excessReturn = portfolioReturn_dec - riskFreeRate_dec;
-    return excessReturn / beta;
+    return (excessReturn / beta) * 100;
 }
 
 // Calmar Ratio: (Annualized Return) / |Max Drawdown|
@@ -4198,7 +4513,7 @@ function calculateJensenAlpha(portfolioReturnPerc, riskFreeRatePerc, marketRetur
     const portfolioReturn_dec = portfolioReturnPerc / 100;
     const riskFreeRate_dec = riskFreeRatePerc / 100;
     const marketReturn_dec = marketReturnPerc / 100;
-    return portfolioReturn_dec - (riskFreeRate_dec + beta * (marketReturn_dec - riskFreeRate_dec));
+    return (portfolioReturn_dec - (riskFreeRate_dec + beta * (marketReturn_dec - riskFreeRate_dec))) * 100;
 }
 
 // M2 Measure (Modigliani-Modigliani Measure): Risk-Free Rate + [(Portfolio Return - Risk-Free Rate) * (Market StdDev / Portfolio StdDev)]
@@ -4208,13 +4523,7 @@ function calculateM2Measure(portfolioReturnPerc, portfolioStdDevPerc, marketStdD
     const portfolioStdDev_dec = portfolioStdDevPerc / 100;
     const marketStdDev_dec = marketStdDevPerc / 100;
     const riskFreeRate_dec = riskFreeRatePerc / 100;
-    return riskFreeRate_dec + ((portfolioReturn_dec - riskFreeRate_dec) * (marketStdDev_dec / portfolioStdDev_dec));
-}
-
-// Alpha T-Statistic: Alpha / (Tracking Error / sqrt(N))
-function calculateAlphaTStat(alpha, trackingError, n) {
-    if (isNaN(alpha) || isNaN(trackingError) || isNaN(n) || n <= 1 || trackingError === 0) return NaN;
-    return alpha / (trackingError / Math.sqrt(n));
+    return (riskFreeRate_dec + ((portfolioReturn_dec - riskFreeRate_dec) * (marketStdDev_dec / portfolioStdDev_dec))) * 100;
 }
 
 // Sharpe Ratio: (Portfolio Return - Risk-Free Rate) / Portfolio Standard Deviation

@@ -11,9 +11,8 @@
     <meta property="og:description" content="An offline-first financial analysis workspace for equity valuation, fixed income, portfolio risk, company comparison, financial ratios, and scenario DCF.">
     <title data-translate="app_title">Advanced Risk & Return Analyzer</title>
     
-    <script src="vendor/plotly.min.js"></script>
-    <script src="vendor/xlsx.full.min.js"></script>
-    <script src="vendor/simple-statistics.min.js"></script>
+    <script defer src="vendor/plotly.min.js"></script>
+    <script defer src="vendor/simple-statistics.min.js"></script>
     <link href="vendor/fontawesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="vendor/sweetalert2.min.css">
     
@@ -130,6 +129,8 @@
 </head>
 <body class="dark theme-dark">
 
+    <a class="skip-link" href="#primary-workspace" data-translate="skip_to_workspace">Skip to workspace</a>
+
     <div class="container mx-auto p-4 max-w-7xl space-y-6 app-shell">
         <header class="flex flex-wrap justify-between items-center gap-4 border-b border-dark-border pb-4">
             <div class="brand-lockup">
@@ -153,18 +154,29 @@
 
         <!-- Tab Navigation -->
         <nav class="flex flex-wrap border-b border-dark-border" aria-label="Analysis workspaces" data-aria-label-key="workspace_navigation">
-            <span class="nav-heading" data-translate="nav_section_title">RESEARCH WORKSPACES</span>
             <button type="button" class="tab-button active" aria-current="page" data-icon="◫" data-tab="asset-analysis" data-translate="tab_asset_analysis" data-tooltip-key="tab_asset_analysis" data-compact-en="Risk" data-compact-fa="ریسک" title="Asset analysis">Asset Analysis</button>
             <button type="button" class="tab-button" data-icon="◇" data-tab="equity-valuation" data-translate="tab_equity_valuation" data-tooltip-key="tab_equity_valuation" data-compact-en="Equity" data-compact-fa="سهام" title="Equity valuation">Equity Valuation</button>
             <button type="button" class="tab-button" data-icon="▤" data-tab="fixed-income" data-translate="tab_fixed_income" data-tooltip-key="tab_fixed_income" data-compact-en="Bonds" data-compact-fa="اوراق" title="Fixed income">Fixed Income</button>
             <button type="button" class="tab-button" data-icon="◎" data-tab="portfolio-management" data-translate="tab_portfolio_management" data-tooltip-key="tab_portfolio_management" data-compact-en="Portfolio" data-compact-fa="سبد" title="Portfolio management">Portfolio Management</button>
             <button type="button" class="tab-button" data-icon="⌁" data-tab="financial-strategy" data-translate="tab_financial_strategy" data-tooltip-key="tab_financial_strategy" data-compact-en="Fundamentals" data-compact-fa="بنیادی" title="Financial strategy analysis">Financial Strategy</button>
-            <div class="nav-foot"><span class="nav-foot-mark" data-translate="nav_local_badge">LOCAL</span><span data-translate="nav_local_note">Research data stays on this device</span></div>
+            <button type="button" class="tab-button" data-icon="ƒ" data-tab="financial-models" data-translate="tab_financial_models" data-tooltip-key="tab_financial_models" data-compact-en="Models" data-compact-fa="مدل‌ها" title="Financial models">Financial Models</button>
+            <details id="fundamental-side-nav" class="fundamental-side-nav" aria-label="Fundamental analysis sections" data-aria-label-key="fundamental_side_nav_title">
+                <summary data-translate="fundamental_side_nav_title">Fundamental analysis</summary>
+                <div class="fundamental-side-links">
+                    <a href="#financial-entry-workspace" data-translate="fundamental_nav_inputs">Financial inputs</a>
+                    <a href="#analyst-dashboard" data-translate="fundamental_nav_brief">Research brief</a>
+                    <a href="#company-comparison-workspace" data-translate="fundamental_nav_peers">Company comparison</a>
+                    <a href="#scenario-dcf-workspace" data-translate="fundamental_nav_dcf">Scenario DCF</a>
+                    <a href="#financial-quality-workspace" data-translate="fundamental_nav_quality">Data quality</a>
+                    <a href="#financial-workbook-workspace" data-translate="fundamental_nav_import">Bulk import</a>
+                    <a href="#calculated-metrics-workspace" data-translate="fundamental_nav_metrics">Metrics & chart</a>
+                </div>
+            </details>
         </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 workspace-layout">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 workspace-layout results-context-active">
             <!-- Results Sidebar (remains outside tabs for global visibility) -->
-            <aside class="lg:col-span-1 order-last lg:order-first bg-dark-card p-4 rounded-lg shadow-md flex flex-col h-fit space-y-3">
+            <aside id="global-results-sidebar" class="lg:col-span-1 order-last lg:order-first bg-dark-card p-4 rounded-lg shadow-md flex flex-col h-fit space-y-3">
                 <h2 class="text-xl font-semibold mb-2 text-center border-b border-dark-border pb-2" data-translate="results_title">Analysis Results:</h2>
                 <div id="results-display" class="space-y-1.5 text-sm flex-grow">
                     <div class="flex justify-between items-center"><strong data-translate="data_count">Data Points</strong> <span id="result-count" class="font-mono text-dark-text-muted" data-translate="value_invalid">N/A</span></div>
@@ -318,7 +330,7 @@
                 </div>
             </aside>
 
-            <main class="lg:col-span-2 order-first lg:order-last space-y-6">
+            <main id="primary-workspace" class="lg:col-span-2 order-first lg:order-last space-y-6" tabindex="-1">
                 <!-- Tab Content Containers -->
                 <div id="asset-analysis-tab" class="tab-content active space-y-6">
                     <section id="asset-data-input-section" class="bg-dark-card p-4 rounded-lg shadow-md z-10 relative">
@@ -393,6 +405,14 @@
                             <label for="expected-market-return" class="text-base font-semibold whitespace-nowrap" data-translate="expected_market_return_title">Expected Market Return (% Annually):</label>
                             <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="expected_market_return_tooltip">ⓘ</span>
                             <input type="text" id="expected-market-return" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary" value="8.0" data-translate-placeholder="expected_market_return_placeholder" placeholder="e.g. 8.0">
+                        </div>
+                        <div>
+                            <label for="return-frequency" class="text-base font-semibold" data-translate="return_frequency_label">Return observation frequency</label>
+                            <span class="tooltip-icon cursor-help text-xs text-dark-text-muted" data-tooltip-key="return_frequency_help">ⓘ</span>
+                            <select id="return-frequency" class="w-full mt-1 bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-2">
+                                <option value="" selected data-translate="frequency_select">Select frequency…</option><option value="1" data-translate="frequency_annual">Annual</option><option value="4" data-translate="frequency_quarterly">Quarterly</option><option value="12" data-translate="frequency_monthly">Monthly</option><option value="52" data-translate="frequency_weekly">Weekly</option><option value="252" data-translate="frequency_daily">Daily (252 trading days)</option>
+                            </select>
+                            <small class="block mt-1 text-dark-text-muted" data-translate="return_frequency_note">Assumes equally spaced, chronologically aligned observations. Risk and excess-return ratios are annualized.</small>
                         </div>
                     </section>
 
@@ -589,21 +609,28 @@
                 </div>
 
                 <div id="financial-strategy-tab" class="tab-content space-y-6">
-                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md fundamental-entry-panel" id="financial-entry-workspace">
                         <div class="section-heading">
                             <div><span class="section-eyebrow" data-translate="fundamental_workspace">FUNDAMENTAL WORKSPACE</span><h2 class="text-xl font-semibold mb-2" data-translate="financial_strategy_title">Fundamental Analysis</h2></div>
                             <span class="data-badge" data-translate="manual_data_badge">Manual data</span>
                         </div>
-                        <p class="text-sm text-dark-text-muted mb-4" data-translate="financial_input_hint">Enter financial statement values using the same currency and scale for all monetary amounts. Enter income statement flows for the reporting year and opening/closing balance sheet values where requested. CFA-style turnover, ROA, ROE and cash-cycle ratios use average balances. Zero denominators or missing required balances display as N/A. CapEx = closing fixed assets − opening fixed assets + depreciation.</p>
-                        <p class="text-xs text-dark-text-muted mb-4" data-translate="company_shares_scale_guidance">Enter share count in the same scale as statement amounts (for example, shares in millions when financials are in millions). Enter prices per actual share.</p>
-                        <div class="periodization-control"><label for="financial-period-months" data-translate="financial_period_months">Financial period length (months)</label><input id="financial-period-months" type="number" min="1" max="60" step="1" value="12"><label for="financial-flow-basis" data-translate="financial_flow_basis_label">Flow presentation</label><select id="financial-flow-basis"><option value="annualized" data-translate="financial_flow_annualized">Annualized (linear)</option><option value="reported" data-translate="financial_flow_reported">Reported period</option></select><span data-translate="financial_period_hint">Linear annualization can conceal seasonality; compare reported-period values when needed.</span></div>
-                        <div class="quote-panel" aria-label="Optional market quote lookup" data-aria-label-key="quote_widget_title">
+                        <nav class="workspace-quick-nav" aria-label="Fundamental analysis sections" data-aria-label-key="fundamental_nav_label"><a href="#financial-entry-workspace" data-translate="fundamental_nav_inputs">Financial inputs</a><a href="#analyst-dashboard" data-translate="fundamental_nav_brief">Research brief</a><a href="#company-comparison-workspace" data-translate="fundamental_nav_peers">Company comparison</a><a href="#scenario-dcf-workspace" data-translate="fundamental_nav_dcf">Scenario DCF</a><a href="#financial-quality-workspace" data-translate="fundamental_nav_quality">Data quality</a><a href="#financial-workbook-workspace" data-translate="fundamental_nav_import">Import data</a><a href="#calculated-metrics-workspace" data-translate="fundamental_nav_metrics">Metrics & chart</a></nav>
+                        <details class="financial-input-guidance">
+                            <summary data-translate="financial_guidance_summary">Input and accounting guidance</summary>
+                            <p data-translate="financial_input_hint">Enter financial statement values using the same currency and scale for all monetary amounts. Enter income statement flows for the reporting year and opening/closing balance sheet values where requested. CFA-style turnover, ROA, ROE and cash-cycle ratios use average balances. Zero denominators or missing required balances display as N/A. CapEx = closing fixed assets − opening fixed assets + depreciation.</p>
+                            <p data-translate="company_shares_scale_guidance">Enter share count in the same scale as statement amounts (for example, shares in millions when financials are in millions). Enter prices per actual share.</p>
+                        </details>
+                        <div class="periodization-panel"><h3 data-translate="financial_period_title">Reporting period</h3><div class="periodization-control"><label for="financial-period-months" data-translate="financial_period_months">Financial period length (months)</label><input id="financial-period-months" type="number" min="1" max="60" step="1" value="12"><label for="financial-flow-basis" data-translate="financial_flow_basis_label">Flow presentation</label><select id="financial-flow-basis"><option value="annualized" data-translate="financial_flow_annualized">Annualized (linear)</option><option value="reported" data-translate="financial_flow_reported">Reported period</option></select><span data-translate="financial_period_hint">Linear annualization can conceal seasonality; compare reported-period values when needed.</span></div></div>
+                        <details class="optional-quote-details">
+                            <summary data-translate="quote_optional_summary">Optional market quote</summary>
+                            <div class="quote-panel" aria-label="Optional market quote lookup" data-aria-label-key="quote_widget_title">
                             <div class="quote-panel-head"><div><span class="section-eyebrow" data-translate="quote_widget_kicker">OPTIONAL MARKET DATA</span><h3 class="text-lg font-semibold" data-translate="quote_widget_title">TradingView market snapshot</h3></div><span class="data-badge" data-translate="quote_on_demand_badge">On demand</span></div>
                             <p class="text-sm text-dark-text-muted" data-translate="quote_widget_hint">Fetch an indicative quote and selected market ratios by TradingView symbol. Financial statements remain user-entered.</p>
                             <div class="quote-search-row"><label for="tradingview-symbol" data-translate="quote_symbol_label">TradingView symbol</label><input id="tradingview-symbol" type="text" class="bg-[#2b2b2b] text-dark-text border border-dark-border rounded px-3 py-2" placeholder="NASDAQ:AAPL" autocomplete="off"><button id="fetch-tradingview-quote" class="bg-primary hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded" data-translate="quote_fetch_button">Load quote</button><button id="apply-tradingview-price" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded hidden" data-translate="quote_use_price_button">Use last price</button></div>
-                            <div id="tradingview-quote-status" class="text-sm text-dark-text-muted" aria-live="polite" data-translate="quote_idle">Manual analysis works offline. Start the local connector to load a market quote.</div>
+                            <div id="tradingview-quote-status" class="text-sm text-dark-text-muted" aria-live="polite" data-translate="quote_idle">Manual analysis works offline. Quotes require an internet connection.</div>
                             <div id="tradingview-quote-snapshot" class="quote-snapshot-grid hidden"></div>
-                        </div>
+                            </div>
+                        </details>
                         <div id="financial-input-groups" class="space-y-5"></div>
                         <button id="calculate-financial-strategy" class="w-full mt-5 bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150" data-translate="calculate_financial_metrics">Calculate Financial Metrics</button>
                     </section>
@@ -616,8 +643,11 @@
                     <section class="bg-dark-card p-4 rounded-lg shadow-md" id="company-comparison-workspace">
                         <div class="section-heading"><div><span class="section-eyebrow" data-translate="peer_workspace_kicker">MULTI-COMPANY WORKSPACE</span><h2 class="text-xl font-semibold mb-2" data-translate="peer_workspace_title">Company Financials & Peer Comparison</h2></div><span class="data-badge" data-translate="local_records_badge">Private local records</span></div>
                         <p class="text-sm text-dark-text-muted mb-4" data-translate="peer_workspace_intro">Build a multi-year financial history for each company. Compare aligned fiscal periods, inspect peer dispersion, and chart trends for any supported metric.</p>
-                        <div class="analysis-guidance mb-4"><h3 class="font-semibold mb-2" data-translate="peer_guidance_title">Analyst checks before comparing</h3><ul class="space-y-1 text-sm text-dark-text-muted"><li data-translate="peer_guidance_currency">Use the same currency and scale across companies; no FX or unit conversion is performed.</li><li data-translate="peer_guidance_period">Align fiscal year ends, reporting periods, and trailing versus annual data before interpreting peers.</li><li data-translate="peer_guidance_accounting">Check accounting policies, one-off items, leases, acquisitions, and restatements for comparability.</li><li data-translate="peer_guidance_direction">A higher ratio is not always better. Interpret valuation, leverage, liquidity, and cash-cycle measures in context.</li></ul></div>
-                        <ol class="comparison-steps mb-4"><li data-translate="comparison_step_one">Add each company once and set its reporting currency and scale.</li><li data-translate="comparison_step_two">For every company, save a consistent financial data set for each fiscal year.</li><li data-translate="comparison_step_three">Choose the same period label, metric family, and trend metric to compare peers.</li></ol>
+                        <details class="peer-guidance-disclosure">
+                            <summary data-translate="peer_guidance_title">Analyst checks before comparing</summary>
+                            <div class="analysis-guidance mb-3"><ul class="space-y-1 text-sm text-dark-text-muted"><li data-translate="peer_guidance_currency">Use the same currency and scale across companies; no FX or unit conversion is performed.</li><li data-translate="peer_guidance_period">Align fiscal year ends, reporting periods, and trailing versus annual data before interpreting peers.</li><li data-translate="peer_guidance_accounting">Check accounting policies, one-off items, leases, acquisitions, and restatements for comparability.</li><li data-translate="peer_guidance_direction">A higher ratio is not always better. Interpret valuation, leverage, liquidity, and cash-cycle measures in context.</li></ul></div>
+                        </details>
+                        <details class="comparison-steps-disclosure mb-4"><summary data-translate="comparison_steps_summary">How to build a reliable peer set</summary><ol class="comparison-steps"><li data-translate="comparison_step_one">Add each company once and set its reporting currency and scale.</li><li data-translate="comparison_step_two">For every company, save a consistent financial data set for each fiscal year.</li><li data-translate="comparison_step_three">Choose the same period label, metric family, and trend metric to compare peers.</li></ol></details>
                         <div class="comparison-toolbar">
                             <label><span data-translate="company_name_label">Company name</span><input id="company-name" type="text" maxlength="80" autocomplete="organization" placeholder="e.g., Acme Corporation" data-translate-placeholder="company_name_placeholder"></label>
                             <label><span data-translate="company_ticker_label">Ticker / identifier</span><input id="company-ticker" type="text" maxlength="24" placeholder="e.g., ACME" data-translate-placeholder="company_ticker_placeholder"></label>
@@ -628,8 +658,8 @@
                             <label><span data-translate="company_select_label">Edit company</span><select id="company-select"><option value="" data-translate="company_select_empty">Select a company</option></select></label>
                             <label><span data-translate="period_select_label">Load saved period</span><select id="company-period-select"><option value="__new__" data-translate="new_period_option">New period</option></select></label>
                         </div>
-                        <div class="report-basis-panel" aria-labelledby="report-basis-heading">
-                            <div class="report-basis-heading"><div><span class="section-eyebrow" data-translate="report_basis_kicker">REPORT BASIS & QUALITY</span><h3 id="report-basis-heading" data-translate="report_basis_title">Period metadata and assurance</h3></div><p data-translate="report_basis_hint">Record period length, statement scope, and assurance so comparisons remain on a like-for-like basis.</p></div>
+                        <details class="report-basis-panel">
+                            <summary class="report-basis-heading"><div><span class="section-eyebrow" data-translate="report_basis_kicker">REPORT BASIS & QUALITY</span><h3 id="report-basis-heading" data-translate="report_basis_title">Period metadata and assurance</h3></div><p data-translate="report_basis_hint">Record period length, statement scope, and assurance so comparisons remain on a like-for-like basis.</p></summary>
                             <div class="comparison-toolbar report-basis-fields">
                                 <label><span data-translate="period_months_label">Period length (months)</span><input id="company-period-months" type="number" min="1" max="60" step="1" inputmode="numeric" placeholder="12"></label>
                                 <label><span data-translate="reporting_basis_label">Statement scope</span><select id="company-reporting-basis"><option value="consolidated" data-translate="basis_consolidated">Consolidated</option><option value="separate" data-translate="basis_separate">Separate</option></select></label>
@@ -640,17 +670,26 @@
                                 <label class="restated-flag"><input id="company-restated" type="checkbox"><span data-translate="restated_label">Restated comparative data</span></label>
                             </div>
                             <p class="report-basis-footnote" data-translate="report_basis_caveat">A matching year label does not make periods comparable if their length, consolidation scope, accounting basis, or assurance differs.</p>
-                        </div>
-                        <div class="comparison-actions">
-                            <button id="prefill-codal-report-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="prefill_codal_report_button">Start from attached Codal report metadata</button>
-                            <button id="create-company-button" type="button" class="bg-primary hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded" data-translate="create_company_button">Add company</button>
-                            <button id="save-company-period-button" type="button" class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-3 rounded" data-translate="save_period_button">Save financial period</button>
-                            <button id="delete-company-button" type="button" class="bg-red-700 hover:bg-red-800 text-white font-semibold py-2 px-3 rounded" data-translate="delete_company_button">Delete selected company</button>
-                            <button id="copy-current-financials-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="copy_current_financials_button">Copy current analysis inputs</button>
-                            <button id="load-company-period-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="load_company_period_button">Load selected period into analysis</button>
-                            <button id="export-company-data-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="export_company_data_button">Export backup</button>
-                            <button id="import-company-data-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="import_company_data_button">Import backup</button>
-                            <input id="import-company-data-file" class="hidden" type="file" accept="application/json,.json">
+                        </details>
+                        <div class="comparison-actions" aria-label="Company data actions" data-aria-label-key="company_actions_label">
+                            <section class="comparison-action-group comparison-action-primary" role="group" aria-label="Company and period setup" data-aria-label-key="company_setup_actions_label">
+                                <h4 data-translate="company_setup_actions_title">Company &amp; period</h4>
+                                <button id="prefill-codal-report-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="prefill_codal_report_button">Start from attached Codal report metadata</button>
+                                <button id="create-company-button" type="button" class="bg-primary hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded" data-translate="create_company_button">Add company</button>
+                                <button id="save-company-period-button" type="button" class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-3 rounded" data-translate="save_period_button">Save financial period</button>
+                            </section>
+                            <section class="comparison-action-group" role="group" aria-label="Analysis workflow" data-aria-label-key="company_workflow_actions_label">
+                                <h4 data-translate="company_workflow_actions_title">Analysis workflow</h4>
+                                <button id="copy-current-financials-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="copy_current_financials_button">Copy current analysis inputs</button>
+                                <button id="load-company-period-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="load_company_period_button">Load selected period into analysis</button>
+                            </section>
+                            <section class="comparison-action-group comparison-action-data" role="group" aria-label="Company data management" data-aria-label-key="company_data_actions_label">
+                                <h4 data-translate="company_data_actions_title">Data management</h4>
+                                <button id="delete-company-button" type="button" class="bg-red-700 hover:bg-red-800 text-white font-semibold py-2 px-3 rounded" data-translate="delete_company_button">Delete selected company</button>
+                                <button id="export-company-data-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="export_company_data_button">Export backup</button>
+                                <button id="import-company-data-button" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold py-2 px-3 rounded" data-translate="import_company_data_button">Import backup</button>
+                            </section>
+                            <input id="import-company-data-file" class="hidden" type="file" accept="application/json">
                         </div>
                         <p id="company-data-status" class="text-sm text-dark-text-muted my-3" aria-live="polite" data-translate="company_data_empty">No companies saved yet. Add a company to start a peer set.</p>
                         <div id="company-period-inputs" class="space-y-5"></div>
@@ -668,7 +707,7 @@
                         <h3 class="text-lg font-semibold mt-6 mb-2" data-translate="peer_trend_chart_title">Multi-year peer trends</h3>
                         <div id="company-trend-chart" class="w-full min-h-[300px] md:min-h-[400px]"></div>
                     </section>
-                    <section class="bg-dark-card p-4 rounded-lg shadow-md advanced-valuation-panel">
+                    <section id="scenario-dcf-workspace" class="bg-dark-card p-4 rounded-lg shadow-md advanced-valuation-panel">
                         <div class="section-heading"><div><span class="section-eyebrow" data-translate="advanced_valuation_kicker">VALUATION & DIAGNOSTICS</span><h2 class="text-xl font-semibold mb-2" data-translate="advanced_valuation_title">Scenario DCF & model checks</h2></div><span class="data-badge">FCFF · 3 scenarios</span></div>
                         <p class="text-sm text-dark-text-muted mb-4" data-translate="advanced_valuation_hint">Build bear, base, and bull FCFF scenarios from annualized financials. Assumptions are editable; this is a sensitivity model, not a target price or investment recommendation.</p>
                         <div class="dcf-assumption-grid">
@@ -676,22 +715,23 @@
                           <fieldset class="dcf-scenario"><legend data-translate="dcf_base">Base case</legend><label><span data-translate="dcf_growth">Revenue growth (%)</span><input data-dcf="base-growth" type="number" step="0.5" placeholder="5"></label><label><span data-translate="dcf_margin">EBIT margin (%)</span><input data-dcf="base-margin" type="number" step="0.5" placeholder="12"></label><label><span data-translate="dcf_wacc">WACC (%)</span><input data-dcf="base-wacc" type="number" step="0.25" placeholder="10"></label><label><span data-translate="dcf_terminal">Terminal growth (%)</span><input data-dcf="base-terminal" type="number" step="0.25" placeholder="2"></label></fieldset>
                           <fieldset class="dcf-scenario"><legend data-translate="dcf_bull">Bull case</legend><label><span data-translate="dcf_growth">Revenue growth (%)</span><input data-dcf="bull-growth" type="number" step="0.5" placeholder="10"></label><label><span data-translate="dcf_margin">EBIT margin (%)</span><input data-dcf="bull-margin" type="number" step="0.5" placeholder="16"></label><label><span data-translate="dcf_wacc">WACC (%)</span><input data-dcf="bull-wacc" type="number" step="0.25" placeholder="8"></label><label><span data-translate="dcf_terminal">Terminal growth (%)</span><input data-dcf="bull-terminal" type="number" step="0.25" placeholder="2.5"></label></fieldset>
                         </div>
-                        <details class="dcf-driver-panel" open><summary data-translate="dcf_drivers_title">Operating drivers & cost of capital</summary><div class="dcf-driver-grid"><label><span data-translate="dcf_nwc_sales">Operating NWC / sales (%)</span><input id="dcf-nwc-sales" type="number" step="0.5" placeholder="Derive from current assets − current liabilities"></label><label><span data-translate="dcf_capex_sales">CapEx / sales (%)</span><input id="dcf-capex-sales" type="number" step="0.5" placeholder="Derive from reported / estimated CapEx"></label><label><span data-translate="dcf_da_sales">D&amp;A / sales (%)</span><input id="dcf-da-sales" type="number" step="0.5" placeholder="Derive from reported depreciation"></label><label><span data-translate="dcf_risk_free">Risk-free rate (%)</span><input id="dcf-risk-free" type="number" step="0.1" placeholder="e.g. 4.0"></label><label><span data-translate="dcf_beta">Levered beta (β)</span><input id="dcf-beta" type="number" step="0.05" placeholder="e.g. 1.1"></label><label><span data-translate="dcf_erp">Equity risk premium (%)</span><input id="dcf-erp" type="number" step="0.1" placeholder="e.g. 5.0"></label><label><span data-translate="dcf_cost_debt">Pre-tax cost of debt (%)</span><input id="dcf-cost-debt" type="number" step="0.1" placeholder="Optional; otherwise manual WACC"></label><label class="dcf-derived-toggle"><input id="dcf-use-derived-wacc" type="checkbox"><span data-translate="dcf_derive_wacc">Derive WACC from CAPM and market capital structure</span></label></div><p id="dcf-wacc-status" class="dcf-driver-note" data-translate="dcf_wacc_manual_note">Manual scenario WACC is active. Derived WACC requires risk-free rate, beta, equity risk premium, cost of debt, tax rate, share price, shares, and interest-bearing debt.</p></details>
+                        <details class="dcf-driver-panel" open><summary data-translate="dcf_drivers_title">Operating drivers & cost of capital</summary><div class="dcf-driver-grid"><label><span data-translate="dcf_nwc_sales">Operating NWC / sales (%)</span><input id="dcf-nwc-sales" type="number" step="0.5" placeholder="Derived from average receivables + inventory − payables" data-translate-placeholder="dcf_nwc_placeholder"></label><label><span data-translate="dcf_capex_sales">CapEx / sales (%)</span><input id="dcf-capex-sales" type="number" step="0.5" placeholder="Derive from reported / estimated CapEx"></label><label><span data-translate="dcf_da_sales">D&amp;A / sales (%)</span><input id="dcf-da-sales" type="number" step="0.5" placeholder="Derive from reported depreciation"></label><label><span data-translate="dcf_risk_free">Risk-free rate (%)</span><input id="dcf-risk-free" type="number" step="0.1" placeholder="e.g. 4.0"></label><label><span data-translate="dcf_beta">Levered beta (β)</span><input id="dcf-beta" type="number" step="0.05" placeholder="e.g. 1.1"></label><label><span data-translate="dcf_erp">Equity risk premium (%)</span><input id="dcf-erp" type="number" step="0.1" placeholder="e.g. 5.0"></label><label><span data-translate="dcf_cost_debt">Pre-tax cost of debt (%)</span><input id="dcf-cost-debt" type="number" step="0.1" placeholder="Optional; otherwise manual WACC"></label><label class="dcf-derived-toggle"><input id="dcf-use-derived-wacc" type="checkbox"><span data-translate="dcf_derive_wacc">Derive WACC from CAPM and market capital structure</span></label></div><p id="dcf-wacc-status" class="dcf-driver-note" data-translate="dcf_wacc_manual_note">Manual scenario WACC is active. Derived WACC requires risk-free rate, beta, equity risk premium, cost of debt, tax rate, share price, shares, and interest-bearing debt.</p></details>
                         <div class="dcf-global-controls"><label><span data-translate="dcf_horizon">Forecast horizon (years)</span><input id="dcf-years" type="number" min="3" max="10" value="5"></label><label><span data-translate="dcf_tax">Tax rate (%)</span><input id="dcf-tax" type="number" min="0" max="100" step="0.5" placeholder="Use reported tax rate"></label><button id="run-dcf-button" type="button" class="bg-primary hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded" data-translate="dcf_run">Calculate scenario DCF</button></div>
+                        <details class="dcf-driver-panel"><summary data-translate="dcf_claims_title">Other claims in the enterprise-to-equity bridge</summary><div class="dcf-driver-grid"><label><span data-translate="dcf_preferred_claim">Preferred equity value</span><input id="dcf-preferred-claim" type="number" min="0" step="any" value="0"></label><label><span data-translate="dcf_preferred_cost">Preferred cost (%)</span><input id="dcf-preferred-cost" type="number" min="0" step="0.1"></label><label><span data-translate="dcf_minority_claim">Non-controlling interest</span><input id="dcf-minority-claim" type="number" min="0" step="any" value="0"></label><label><span data-translate="dcf_other_claim">Other senior claims</span><input id="dcf-other-claim" type="number" min="0" step="any" value="0"></label></div><p class="dcf-driver-note" data-translate="dcf_claims_note">Enter claims in the same currency and scale as the financial statements; these amounts are deducted from enterprise value to estimate common equity value.</p></details>
                         <div id="dcf-results" class="dcf-results" aria-live="polite"><p class="text-dark-text-muted" data-translate="dcf_empty">Enter and calculate fundamental inputs first, then run the DCF scenarios.</p></div><div id="dcf-chart" class="w-full min-h-[280px]"></div><div id="dcf-sensitivity" class="overflow-x-auto"></div>
                         <p class="report-basis-footnote" data-translate="dcf_caveat">FCFF = NOPAT + D&amp;A − CapEx − change in operating NWC. NWC is forecast as a share of revenue; the opening proxy uses current assets less current liabilities unless overridden. Review seasonality, leases, taxes, and terminal value concentration.</p>
                     </section>
-                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                    <section id="financial-quality-workspace" class="bg-dark-card p-4 rounded-lg shadow-md">
                         <div class="section-heading"><div><span class="section-eyebrow" data-translate="quality_kicker">INPUT INTEGRITY</span><h2 class="text-xl font-semibold mb-2" data-translate="quality_title">Financial statement quality checks</h2></div><span class="data-badge" data-translate="quality_not_rating">Diagnostics, not a rating</span></div>
                         <p class="text-sm text-dark-text-muted mb-3" data-translate="quality_hint">Checks flag missing, inconsistent, or unusual inputs. They do not determine fraud, credit quality, or investment merit.</p><div id="financial-quality-checks" class="quality-check-grid"><p class="text-dark-text-muted" data-translate="quality_empty">Calculate metrics to run input diagnostics.</p></div>
                     </section>
-                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                    <section id="financial-workbook-workspace" class="bg-dark-card p-4 rounded-lg shadow-md">
                         <div class="section-heading"><div><span class="section-eyebrow" data-translate="workbook_kicker">BULK DATA ENTRY</span><h2 class="text-xl font-semibold mb-2" data-translate="workbook_title">Multi-company CSV / Excel import</h2></div><span class="data-badge" data-translate="offline_badge">Offline · local files</span></div>
                         <p class="text-sm text-dark-text-muted mb-3" data-translate="workbook_hint">Use one row per company-period-field. Required headers: company, period, field, value. Optional: ticker, currency, scale, months, scope, status, opinion. Preview and validate before applying records.</p>
                         <div class="workbook-toolbar"><input id="financial-workbook-file" type="file" accept=".csv,.xlsx,.xls" aria-label="Select CSV or Excel workbook" data-aria-label-key="workbook_file_label"><button id="preview-financial-workbook" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold px-3 py-2 rounded" data-translate="workbook_preview">Preview & validate</button><button id="apply-financial-workbook" type="button" class="bg-primary hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded" data-translate="workbook_apply" disabled>Apply validated rows</button><button id="download-financial-template" type="button" class="bg-secondary hover:bg-dark-primary-hover text-white font-semibold px-3 py-2 rounded" data-translate="workbook_template">Download template</button></div>
                         <div id="financial-workbook-preview" class="overflow-x-auto text-sm" aria-live="polite"></div>
                     </section>
-                    <section class="bg-dark-card p-4 rounded-lg shadow-md">
+                    <section id="calculated-metrics-workspace" class="bg-dark-card p-4 rounded-lg shadow-md">
                         <div class="section-heading"><h2 class="text-xl font-semibold mb-3" data-translate="calculated_metrics_title">Calculated Metrics</h2><span class="data-badge" data-translate="cfa_framework_badge">CFA ratio framework</span></div>
                         <p id="financial-coverage" class="text-sm text-dark-text-muted mb-3" aria-live="polite" data-translate="financial_coverage_empty">Complete relevant inputs to calculate more metrics.</p>
                         <div id="financial-kpis" class="kpi-grid"></div>
@@ -725,12 +765,118 @@
                         <div id="financial-chart" class="w-full min-h-[300px] md:min-h-[400px]"></div>
                     </section>
                 </div>
+
+                <div id="financial-models-tab" class="tab-content space-y-6">
+                    <section class="bg-dark-card p-4 rounded-lg shadow-md model-intro">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="models_kicker">QUANTITATIVE TOOLKIT</span><h2 class="text-xl font-semibold mb-2" data-translate="models_title">Financial Models & Formula Library</h2></div><span class="data-badge" data-translate="models_offline_badge">Local calculations</span></div>
+                        <p class="text-sm text-dark-text-muted" data-translate="models_intro">A focused workspace for time value of money, asset-pricing models, and core valuation relationships. Enter assumptions explicitly and review the formula and limitations beside each result.</p>
+                        <nav class="model-jump-nav" aria-label="Financial model sections" data-aria-label-key="models_nav_label"><a href="#tvm-model" data-translate="models_nav_tvm">Time Value of Money</a><a href="#capital-budgeting-model" data-translate="models_nav_capital">Capital budgeting</a><a href="#wacc-model" data-translate="models_nav_wacc">Cost of capital</a><a href="#option-pricing-model" data-translate="models_nav_options">Options & Greeks</a><a href="#asset-pricing-models" data-translate="models_nav_pricing">CAPM & APT</a><a href="#advanced-formula-library" data-translate="models_nav_formula">Formula library</a></nav>
+                    </section>
+
+                    <section id="tvm-model" class="bg-dark-card p-4 rounded-lg shadow-md model-panel">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="tvm_kicker">TIME VALUE OF MONEY</span><h2 class="text-xl font-semibold" data-translate="tvm_title">Future Value, Present Value & Annuities</h2></div></div>
+                        <p class="text-sm text-dark-text-muted model-description" data-translate="tvm_description">Calculate FV, PV, or the periodic contribution for a level-payment annuity. Payments occur at the end or beginning of each period; the annual nominal rate is converted using the selected compounding frequency.</p>
+                        <div class="model-input-grid tvm-input-grid">
+                            <label><span data-translate="tvm_target_label">Solve for</span><select id="tvm-target"><option value="fv" data-translate="tvm_target_fv">Future Value (FV)</option><option value="pv" data-translate="tvm_target_pv">Present Value (PV)</option><option value="pmt" data-translate="tvm_target_pmt">Periodic Payment (PMT)</option><option value="n" data-translate="tvm_target_n">Number of periods (N)</option><option value="rate" data-translate="tvm_target_rate">Nominal annual rate (I/Y)</option></select></label>
+                            <label><span data-translate="tvm_pv_label">Present value (PV)</span><input id="tvm-pv" type="text" inputmode="decimal" value="10000" placeholder="e.g. 10,000"></label>
+                            <label><span data-translate="tvm_pmt_label">Periodic contribution (PMT)</span><input id="tvm-pmt" type="text" inputmode="decimal" value="500" placeholder="e.g. 500"></label>
+                            <label><span data-translate="tvm_fv_label">Future value target (FV)</span><input id="tvm-fv" type="text" inputmode="decimal" value="25000" placeholder="e.g. 25,000"></label>
+                            <label><span data-translate="tvm_rate_label">Nominal annual rate (%)</span><input id="tvm-rate" type="text" inputmode="decimal" value="8" placeholder="e.g. 8"></label>
+                            <label><span data-translate="tvm_years_label">Investment horizon (years)</span><input id="tvm-years" type="number" min="0" max="100" step="0.5" value="10"></label>
+                            <label><span data-translate="tvm_frequency_label">Compounding / payment frequency</span><select id="tvm-frequency"><option value="1" data-translate="freq_annual">Annual</option><option value="2" data-translate="freq_semiannual">Semi-annual</option><option value="4" data-translate="freq_quarterly">Quarterly</option><option value="12" data-translate="freq_monthly">Monthly</option><option value="365" data-translate="freq_daily">Daily (365)</option></select></label>
+                            <label><span data-translate="tvm_timing_label">Payment timing</span><select id="tvm-timing"><option value="end" data-translate="tvm_ordinary">End of period (ordinary annuity)</option><option value="beginning" data-translate="tvm_due">Beginning of period (annuity due)</option></select></label>
+                        </div>
+                        <div class="model-action-row"><button id="calculate-tvm-button" type="button" class="bg-primary text-white font-semibold px-4 py-2 rounded" data-translate="calculate_model_button">Calculate model</button><button id="reset-tvm-button" type="button" class="bg-secondary font-semibold px-4 py-2 rounded" data-translate="reset_model_button">Reset example</button></div>
+                        <div id="tvm-result" class="model-result" aria-live="polite"><strong data-translate="tvm_result_label">Calculated result</strong><output id="tvm-result-value">—</output><p id="tvm-result-detail" data-translate="tvm_result_hint">Enter assumptions and calculate to see the result.</p></div>
+                        <details class="model-formula-details"><summary data-translate="tvm_formula_summary">Formula & assumptions</summary><p data-translate="tvm_solve_formulas">PV and PMT are rearranged from the FV equation; N and I/Y are solved numerically.</p><p data-translate="tvm_formula_note">Periodic rate i = nominal annual rate / m; number of periods n = years × m. FV = PV(1+i)^n + PMT × [((1+i)^n − 1)/i], adjusted by (1+i) for annuity due. No taxes, fees, inflation, or changing rates are modeled.</p></details>
+                    </section>
+
+                    <section id="capital-budgeting-model" class="bg-dark-card p-4 rounded-lg shadow-md model-panel">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="capital_kicker">INVESTMENT DECISIONS</span><h2 class="text-xl font-semibold" data-translate="capital_title">Capital Budgeting & Project Returns</h2></div><span class="data-badge" data-translate="model_local_badge">Calculated locally</span></div>
+                        <p class="text-sm text-dark-text-muted model-description" data-translate="capital_description">Enter cash flow at time 0 first, then one cash flow per equal period. NPV, IRR, MIRR, profitability index and payback metrics are calculated from the same timeline.</p>
+                        <div class="model-input-grid capital-input-grid">
+                            <label><span data-translate="capital_cashflows_label">Cash flows (t₀ first; one per line)</span><textarea id="capital-cashflows" rows="7" inputmode="decimal">-100000
+30000
+35000
+40000
+45000</textarea></label>
+                            <div class="capital-side-inputs">
+                                <label><span data-translate="capital_discount_label">Discount / finance rate (%)</span><input id="capital-discount-rate" type="number" step="0.1" value="10"></label>
+                                <label><span data-translate="capital_reinvest_label">MIRR reinvestment rate (%)</span><input id="capital-reinvest-rate" type="number" step="0.1" value="8"></label>
+                                <label><span data-translate="capital_period_label">Period length</span><select id="capital-period"><option value="annual" data-translate="capital_annual">Annual</option><option value="quarterly" data-translate="capital_quarterly">Quarterly</option><option value="monthly" data-translate="capital_monthly">Monthly</option></select></label>
+                            </div>
+                        </div>
+                        <div class="model-action-row"><button id="calculate-capital-budget-button" type="button" class="bg-primary text-white font-semibold px-4 py-2 rounded" data-translate="calculate_model_button">Calculate model</button><button id="reset-capital-budget-button" type="button" class="bg-secondary font-semibold px-4 py-2 rounded" data-translate="capital_reset">Reset example</button></div>
+                        <div id="capital-budget-results" class="advanced-result-grid" aria-live="polite"><article><span data-translate="capital_npv">Net present value (NPV)</span><strong id="capital-npv-result">—</strong></article><article><span data-translate="capital_irr">Internal rate of return (IRR)</span><strong id="capital-irr-result">—</strong></article><article><span data-translate="capital_mirr">Modified IRR (MIRR)</span><strong id="capital-mirr-result">—</strong></article><article><span data-translate="capital_pi">Profitability index (PI)</span><strong id="capital-pi-result">—</strong></article><article><span data-translate="capital_payback">Payback period</span><strong id="capital-payback-result">—</strong></article><article><span data-translate="capital_discounted_payback">Discounted payback</span><strong id="capital-discounted-payback-result">—</strong></article><article><span data-translate="capital_eaa">Equivalent annual annuity (EAA)</span><strong id="capital-eaa-result">—</strong></article></div>
+                        <p id="capital-budget-status" class="model-status" aria-live="polite" data-translate="capital_waiting">Enter a valid investment with at least one inflow and one outflow.</p><div id="capital-budget-chart" class="advanced-chart"></div>
+                        <details class="model-formula-details"><summary data-translate="capital_method_summary">Method & interpretation</summary><p data-translate="capital_method_note">IRR may have multiple or no real solutions for non-conventional cash flows; all bracketed roots are reported. MIRR separates finance and reinvestment rates. Payback assumes linear recovery within a period. Periods are equally spaced, with no taxes or mid-period timing.</p></details>
+                    </section>
+
+                    <section id="wacc-model" class="bg-dark-card p-4 rounded-lg shadow-md model-panel">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="wacc_kicker">CAPITAL STRUCTURE</span><h2 class="text-xl font-semibold" data-translate="wacc_title">Weighted Average Cost of Capital</h2></div></div>
+                        <p class="text-sm text-dark-text-muted model-description" data-translate="wacc_description">Use market-value capital weights, marginal financing costs and a tax rate consistent with the cash-flow currency and nominal/real basis.</p>
+                        <div class="model-input-grid">
+                            <label><span data-translate="wacc_equity_value">Market value of common equity</span><input id="wacc-equity-value" type="number" min="0" step="any" value="700"></label><label><span data-translate="wacc_debt_value">Market value of debt</span><input id="wacc-debt-value" type="number" min="0" step="any" value="250"></label><label><span data-translate="wacc_preferred_value">Market value of preferred equity</span><input id="wacc-preferred-value" type="number" min="0" step="any" value="50"></label><label><span data-translate="wacc_cost_equity">Cost of common equity (%)</span><input id="wacc-cost-equity" type="number" step="0.1" value="12"></label><label><span data-translate="wacc_cost_debt">Pre-tax cost of debt (%)</span><input id="wacc-cost-debt" type="number" step="0.1" value="7"></label><label><span data-translate="wacc_cost_preferred">Cost of preferred equity (%)</span><input id="wacc-cost-preferred" type="number" step="0.1" value="8"></label><label><span data-translate="wacc_tax">Marginal tax rate (%)</span><input id="wacc-tax" type="number" min="0" max="100" step="0.5" value="25"></label>
+                        </div>
+                        <div class="advanced-result-grid wacc-results" aria-live="polite"><article class="primary-result"><span data-translate="wacc_result">Weighted average cost of capital</span><strong id="wacc-result">—</strong></article><article><span data-translate="wacc_equity_weight">Common equity weight</span><strong id="wacc-equity-weight-result">—</strong></article><article><span data-translate="wacc_debt_weight">Debt weight</span><strong id="wacc-debt-weight-result">—</strong></article><article><span data-translate="wacc_preferred_weight">Preferred equity weight</span><strong id="wacc-preferred-weight-result">—</strong></article></div>
+                        <p id="wacc-status" class="model-status" aria-live="polite" data-translate="wacc_waiting">Enter positive total capital and valid financing costs.</p><details class="model-formula-details"><summary data-translate="wacc_method_summary">Formula & analyst checks</summary><p data-translate="wacc_method_note">WACC = wE·rE + wD·rD·(1−T) + wP·rP. Weights use market values. Tax shields assume deductible interest; distress costs, issuance costs and changing capital structure are excluded.</p></details>
+                    </section>
+
+                    <section id="option-pricing-model" class="bg-dark-card p-4 rounded-lg shadow-md model-panel">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="options_kicker">DERIVATIVES & RISK</span><h2 class="text-xl font-semibold" data-translate="options_title">Black–Scholes–Merton & Greeks</h2></div><span class="data-badge" data-translate="options_european_badge">European options</span></div>
+                        <p class="text-sm text-dark-text-muted model-description" data-translate="options_description">Estimate European call and put values using continuous compounding and dividend yield. Review sensitivities to spot, volatility, time and rates alongside the model assumptions.</p>
+                        <div class="model-input-grid">
+                            <label><span data-translate="option_spot">Underlying spot price (S)</span><input id="option-spot" type="number" min="0" step="any" value="100"></label><label><span data-translate="option_strike">Strike price (K)</span><input id="option-strike" type="number" min="0" step="any" value="100"></label><label><span data-translate="option_maturity">Time to expiration (years)</span><input id="option-maturity" type="number" min="0" step="0.01" value="1"></label><label><span data-translate="option_rate">Continuously compounded risk-free rate (%)</span><input id="option-rate" type="number" step="0.1" value="4"></label><label><span data-translate="option_dividend">Continuous dividend yield (%)</span><input id="option-dividend" type="number" step="0.1" value="1"></label><label><span data-translate="option_volatility">Annualized volatility (%)</span><input id="option-volatility" type="number" min="0" step="0.1" value="25"></label>
+                        </div>
+                        <div class="advanced-result-grid option-results" aria-live="polite"><article class="primary-result"><span data-translate="option_call">European call value</span><strong id="option-call-result">—</strong></article><article class="primary-result"><span data-translate="option_put">European put value</span><strong id="option-put-result">—</strong></article><article><span data-translate="option_call_delta">Call delta</span><strong id="option-call-delta">—</strong></article><article><span data-translate="option_put_delta">Put delta</span><strong id="option-put-delta">—</strong></article><article><span data-translate="option_gamma">Gamma</span><strong id="option-gamma">—</strong></article><article><span data-translate="option_vega">Vega (per 1% vol)</span><strong id="option-vega">—</strong></article><article><span data-translate="option_call_theta">Call theta (annual)</span><strong id="option-call-theta">—</strong></article><article><span data-translate="option_put_theta">Put theta (annual)</span><strong id="option-put-theta">—</strong></article><article><span data-translate="option_call_rho">Call rho (per 1% rate)</span><strong id="option-call-rho">—</strong></article><article><span data-translate="option_put_rho">Put rho (per 1% rate)</span><strong id="option-put-rho">—</strong></article></div>
+                        <p id="option-status" class="model-status" aria-live="polite" data-translate="options_ready">Values are illustrative and depend on constant volatility and rate assumptions.</p><div id="option-payoff-chart" class="advanced-chart"></div>
+                        <details class="model-formula-details"><summary data-translate="options_method_summary">Model assumptions</summary><p data-translate="options_method_note">European exercise, lognormal prices, constant volatility and rates, frictionless trading, continuous dividend yield and no early exercise. American options, discrete dividends, skew and stochastic volatility are not modeled.</p></details>
+                    </section>
+
+                    <section id="asset-pricing-models" class="bg-dark-card p-4 rounded-lg shadow-md model-panel">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="pricing_kicker">EXPECTED RETURN FRAMEWORKS</span><h2 class="text-xl font-semibold" data-translate="pricing_title">CAPM & Arbitrage Pricing Theory (APT)</h2></div></div>
+                        <p class="text-sm text-dark-text-muted model-description" data-translate="pricing_description">Compare a single-factor CAPM estimate with a multi-factor APT estimate. Factor risk premiums are entered directly in percentage points and betas measure sensitivity to each factor.</p>
+                        <div class="model-input-grid pricing-input-grid">
+                            <label><span data-translate="pricing_rf">Risk-free rate (%)</span><input id="pricing-rf" type="text" inputmode="decimal" value="4" placeholder="e.g. 4"></label>
+                            <label><span data-translate="pricing_market">Expected market return (%)</span><input id="pricing-market-return" type="text" inputmode="decimal" value="9" placeholder="e.g. 9"></label>
+                            <label><span data-translate="pricing_market_beta">Market beta (βm)</span><input id="pricing-market-beta" type="text" inputmode="decimal" value="1" placeholder="Usually 1 for market portfolio"></label>
+                        </div>
+                        <h3 class="model-subtitle" data-translate="apt_factor_title">APT factor exposures and premia</h3>
+                        <div class="model-input-grid apt-factor-grid">
+                            <label><span data-translate="apt_factor_one">Factor 1: market premium (%)</span><input id="apt-premium-1" type="text" inputmode="decimal" value="5"></label><label><span data-translate="apt_beta_one">Factor 1 beta</span><input id="apt-beta-1" type="text" inputmode="decimal" value="1"></label>
+                            <label><span data-translate="apt_factor_two">Factor 2: size premium (%)</span><input id="apt-premium-2" type="text" inputmode="decimal" value="2"></label><label><span data-translate="apt_beta_two">Factor 2 beta</span><input id="apt-beta-2" type="text" inputmode="decimal" value="0.3"></label>
+                            <label><span data-translate="apt_factor_three">Factor 3: value premium (%)</span><input id="apt-premium-3" type="text" inputmode="decimal" value="1.5"></label><label><span data-translate="apt_beta_three">Factor 3 beta</span><input id="apt-beta-3" type="text" inputmode="decimal" value="0.2"></label>
+                        </div>
+                        <div class="model-action-row"><button id="calculate-pricing-button" type="button" class="bg-primary text-white font-semibold px-4 py-2 rounded" data-translate="calculate_model_button">Calculate model</button></div>
+                        <div id="pricing-results" class="pricing-results" aria-live="polite">
+                            <article class="pricing-result-card"><span data-translate="capm_expected_label">CAPM expected return</span><strong id="capm-expected-result">—</strong><small data-translate="capm_formula_short">Rf + βm × (Rm − Rf)</small></article>
+                            <article class="pricing-result-card"><span data-translate="apt_expected_label">APT expected return</span><strong id="apt-expected-result">—</strong><small data-translate="apt_formula_short">Rf + Σ(βk × factor premiumk)</small></article>
+                            <article class="pricing-result-card"><span data-translate="apt_capm_spread">APT − CAPM spread</span><strong id="pricing-spread-result">—</strong><small data-translate="spread_interpretation">Model estimate difference; investigate factor definitions and sample.</small></article>
+                        </div>
+                        <p id="pricing-model-status" class="model-status" aria-live="polite" data-translate="pricing_ready">Inputs are valid; estimates use the assumptions above.</p>
+                        <details class="model-formula-details"><summary data-translate="pricing_formula_summary">Interpretation and model risk</summary><p data-translate="pricing_formula_note">CAPM is a one-factor equilibrium model. APT is a linear factor model; factor selection and premia are not uniquely determined by this calculator. These expected returns are assumptions, not guaranteed outcomes. Do not treat CAPM and APT estimates as interchangeable without checking horizon, currency, factor construction, and estimation method.</p></details>
+                    </section>
+
+                    <section id="advanced-formula-library" class="bg-dark-card p-4 rounded-lg shadow-md model-panel">
+                        <div class="section-heading"><div><span class="section-eyebrow" data-translate="formula_kicker">QUICK REFERENCE</span><h2 class="text-xl font-semibold" data-translate="formula_title">Advanced Financial Formula Library</h2></div></div>
+                        <p class="text-sm text-dark-text-muted model-description" data-translate="formula_description">Review the structure, inputs, and interpretation limits of common CFA-style models. Expand a card for the formula and analytical checks.</p>
+                        <div class="formula-library-grid">
+                            <details class="formula-card"><summary><strong>WACC</strong><span data-translate="formula_wacc_name">Weighted average cost of capital</span></summary><p>WACC = E/(D+E) × Re + D/(D+E) × Rd × (1−T)</p><small data-translate="formula_wacc_note">Use market-value weights and marginal after-tax debt cost; match nominal/real basis and currency to FCFF.</small></details>
+                            <details class="formula-card"><summary><strong>FCFF</strong><span data-translate="formula_fcff_name">Free cash flow to the firm</span></summary><p>FCFF = EBIT × (1−T) + D&amp;A − CapEx − ΔNWC</p><small data-translate="formula_fcff_note">Discount FCFF at WACC to estimate enterprise value; subtract net debt and other claims for equity value.</small></details>
+                            <details class="formula-card"><summary><strong>ROIC &amp; EVA</strong><span data-translate="formula_eva_name">Economic value added</span></summary><p>ROIC = NOPAT / Average invested capital<br>EVA = NOPAT − WACC × Invested capital</p><small data-translate="formula_eva_note">Consistent operating scope, tax treatment, and invested-capital definition are essential.</small></details>
+                            <details class="formula-card"><summary><strong>DuPont ROE</strong><span data-translate="formula_dupont_name">Three-factor decomposition</span></summary><p>ROE = Net margin × Asset turnover × Equity multiplier</p><small data-translate="formula_dupont_note">Separate profitability, operating efficiency, and leverage to explain changes in ROE.</small></details>
+                            <details class="formula-card"><summary><strong>Gordon Growth</strong><span data-translate="formula_gordon_name">Dividend discount model</span></summary><p>V₀ = D₁ / (r − g), where D₁ = D₀(1+g)</p><small data-translate="formula_gordon_note">Requires r &gt; g and sustainable constant growth; value becomes highly sensitive as r approaches g.</small></details>
+                            <details class="formula-card"><summary><strong>CCC</strong><span data-translate="formula_ccc_name">Cash conversion cycle</span></summary><p>CCC = DSO + DIO − DPO</p><small data-translate="formula_ccc_note">Use average receivables, inventory, and payables with aligned sales/COGS periods; seasonality can distort point estimates.</small></details>
+                            <details class="formula-card"><summary><strong>Bond duration</strong><span data-translate="formula_duration_name">Modified duration and convexity</span></summary><p>ΔP/P ≈ −Dmod × Δy + ½ × Convexity × (Δy)²</p><small data-translate="formula_duration_note">Local approximation for small parallel yield changes; embedded options and curve shifts require more advanced treatment.</small></details>
+                            <details class="formula-card"><summary><strong>Sharpe ratio</strong><span data-translate="formula_sharpe_name">Excess return per unit of total risk</span></summary><p>Sharpe = (Rp − Rf) / σp</p><small data-translate="formula_sharpe_note">Returns and risk-free rate must share a frequency; standard deviation treats upside and downside volatility symmetrically.</small></details>
+                            <details class="formula-card"><summary><strong>FCFE</strong><span data-translate="formula_fcfe_name">Free cash flow to equity</span></summary><p>FCFE = Net income + D&amp;A − CapEx − ΔNWC + net borrowing</p><small data-translate="formula_fcfe_note">Discount at cost of equity. Net borrowing and reinvestment assumptions must match the forecast capital structure.</small></details>
+                            <details class="formula-card"><summary><strong>Residual income</strong><span data-translate="formula_residual_name">Equity value from book value and excess returns</span></summary><p>V₀ = B₀ + Σ [(ROEₜ − rₑ) × Bₜ₋₁] / (1 + rₑ)ᵗ</p><small data-translate="formula_residual_note">Useful when dividends or free cash flows are difficult to forecast; book value and clean-surplus assumptions matter.</small></details>
+                            <details class="formula-card"><summary><strong>Fama–French 3-factor</strong><span data-translate="formula_factor_name">Market, size, and value factor model</span></summary><p>Ri − Rf = α + βMKT·MKT + βSMB·SMB + βHML·HML + ε</p><small data-translate="formula_factor_note">Factor returns must be aligned in time and currency; exposures are estimated, not prescribed by this formula.</small></details>
+                        </div>
+                    </section>
+                </div>
             </main>
         </div>
-
-        <footer class="mt-6 py-2 px-4 text-center text-sm text-dark-text-muted border-t border-dark-border">
-            <span id="status-bar" data-translate="status_ready">Ready.</span>
-        </footer>
 
         <div id="plotModal" class="fixed inset-0 z-40 hidden items-center justify-center bg-black/70" aria-labelledby="plotModalLabel" aria-modal="true" role="dialog">
             <div class="bg-dark-card text-dark-text rounded-lg shadow-xl max-w-4xl w-full mx-4 p-1 flex flex-col" style="max-height: 90vh;">
@@ -742,7 +888,7 @@
                     <div id="plot-container" class="w-full h-full min-h-[300px] md:min-h-[400px] lg:min-h-[450px]"></div> </div>
             </div>
         </div>
-    </div> <script src="script.js"></script>
+    </div> <script src="financial-math.js"></script><script src="script.js"></script>
     <script src="vendor/sweetalert2.all.min.js"></script>
 </body>
 </html>
